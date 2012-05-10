@@ -12,6 +12,11 @@ The RestKit plugin requires CakePHP 2.2
 
 ## Setup
 
+Clone the repository into /app/Plugin/RestKit:
+
+     git submodule add git@github.com:bravo-kernel/cakephp-restkit.git Plugin/RestKit
+
+
 Enable the RestKit plugin in /app/Config/bootstrap.php:
 
     CakePlugin::load(array(
@@ -78,3 +83,4 @@ RestKit supports validation for the following URI options out-of-the-box.
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * extend validations for known URI-options
 * enable/disable URI-options from the bootstrap
+* add tests

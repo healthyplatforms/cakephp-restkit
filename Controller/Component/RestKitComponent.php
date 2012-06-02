@@ -4,7 +4,7 @@ App::uses('Component', 'Controller');
 App::uses('RestOption', 'Model');
 
 /**
- * Description of RestUtils
+ * Description of RestKitComponent
  *
  * @todo (might have to) build in a check in validateUriOptions for this->controller->$modelName->validates() because it will break if the model has $uses = false or array()
  *

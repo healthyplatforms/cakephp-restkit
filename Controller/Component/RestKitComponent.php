@@ -1,15 +1,15 @@
 <?php
 
-/**
- * Description of RestUtils
- *
- * @author bravo-kernel
- *
- * TODO (might have to) build in a check in validateUriOptions for this->controller->$modelName->validates() because it will break if the model has $uses = false or array()
- */
 App::uses('Component', 'Controller');
 App::uses('RestOption', 'Model');
 
+/**
+ * Description of RestUtils
+ *
+ * @todo (might have to) build in a check in validateUriOptions for this->controller->$modelName->validates() because it will break if the model has $uses = false or array()
+ *
+ * @author bravo-kernel
+ */
 class RestKitComponent extends Component {
 
 /**
@@ -53,6 +53,11 @@ class RestKitComponent extends Component {
 			)));
 	}
 
+/**
+* _getErrors() ......
+*
+* @todo add documentation
+*/
 	public function getErrors() {
 		return $this->_errors;
 	}

@@ -53,6 +53,22 @@ handle all array reformatting for you.
         $this->RestKit->render(array('users' => $users));
     }
 
+Will produce:
+
+    <response>
+      <users>
+        <user>
+          <id>1</id>
+          <username>BravoKernel</username>
+        </user>
+        <user>
+          <id>2</id>
+          <username>Ceeram</username>
+        </user>
+      <users>
+    <response>
+
+
 ### Custom Exceptions
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:

@@ -68,7 +68,7 @@ To return the following XML along with a Response Header using Status Code 666 a
       <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
     </response>
 
-**Please note** that you can add your own Status Codes and messages by defining them in bootstrap.php
+**Note:** custom Status Codes and messages must be defined in /RestKit/Config/bootstrap.php
 
 ### Validating URI parameters
 

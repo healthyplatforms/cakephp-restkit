@@ -92,6 +92,8 @@ RestKit supports out-of-the box validation for the following URI options
 * add errorcode system to make them selectable in your IDE and to prevent having to pass them as a parameter
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * add prefix route (e.g. /v1/)
+* add security (deny all unless authorized)
+* add OAuth token handling (needs separate app with OAuth server and login functionality)
 * extend validations for known URI-options
 * enable/disable URI-options from the bootstrap
 * add tests

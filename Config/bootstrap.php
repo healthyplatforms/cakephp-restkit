@@ -6,6 +6,7 @@
  */
 
 Configure::write('RestKit', array(
+    'prefix' => 'v1',
     'version' => '1.0.0',
     'enableOptionValidation' => true,
 

@@ -19,11 +19,15 @@ class RestKitComponent extends Component {
 
 /**
 * startup() is used to make the calling Controller available as $this->controller
+* and to return 404 errors for all non JSON/XML requests (when enabled in bootstrap.php)
+*
+* NOTE: startup() is called before the controller's beforeFilter()
 *
 * @param Controller $controller
 */
 	public function startup(Controller $controller) {
 		$this->controller = $controller;
+		$this->checkRequestMethod($controller);
 	}
 
 /**
@@ -129,6 +133,8 @@ class RestKitComponent extends Component {
  * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)
  * - allow only specific pages to be requested as HTML (e.g. for OAuth or logging in)
  *
+ * @TODO decide whether to add support for specified exceptions in controller::action pairs
+ *
  * @param void
  */
 	public function checkRequestMethod(Controller $controller) {
@@ -145,11 +151,11 @@ class RestKitComponent extends Component {
 		}
 
 		// This request is neither JSON nor XML so return a 404 for all calls
-		// that are not in the exceptiosns array (these will be accessible as html)
+		// that are not in the exceptions array (these will be accessible as html)
 		// TODO: make these controller/action pairs
-		if (!in_array($controller->params['controller'], array('OAuth'))) {
-			throw new NotFoundException();
-		}
+		//if (!in_array($controller->params['controller'], array('OAuth'))) {
+		//	throw new NotFoundException();
+		//}
 	}
 
 	/**

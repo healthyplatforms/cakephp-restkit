@@ -50,7 +50,8 @@ Configure::write('RestKit', array(
 //		501 => 'Not Implemented',
 //		502 => 'Bad Gateway',
 //		503 => 'Service Unavailable',
-//		504 => 'Gateway Time-out'
+//		504 => 'Gateway Time-out',
+		666 => 'Overloading service',
     )
 
 ));

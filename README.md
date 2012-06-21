@@ -57,6 +57,8 @@ handle all array reformatting for you.
         $this->RestKit->render(array('users' => $users));
     }
 
+### Validating URI parameters
+
 Validate URI options by simply defining your default options (all others passed
 options will be ignored):
 

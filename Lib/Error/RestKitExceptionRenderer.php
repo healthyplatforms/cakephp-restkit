@@ -25,7 +25,7 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 */
 	protected function _getController($exception) {
 		$controller = parent::_getController($exception);
-		$controller->response->httpCodes(Configure::read('RestKit.httpCodes'));
+		$controller->response->httpCodes(Configure::read('RestKit.statusCodes'));
 		return $controller;
 	}
 

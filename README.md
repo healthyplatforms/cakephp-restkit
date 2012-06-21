@@ -76,7 +76,7 @@ error information:
 
     throw new RestKitException(array('message' => 'You are overloading my API', 'errorCode' => 12345), 666);
 
-To produce a Response Header with Status Code 666 and message 'Something very evil' along with the following XML:
+To return the following XML along with a Response Header using Status Code 666 and message 'Something very evil':
 
     <response>
       <status>666</status>

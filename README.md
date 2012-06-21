@@ -69,7 +69,16 @@ options will be ignored):
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:
 
-    throw new RestKitException(array('message' => 'You are overloading my API', 'errorCode' => 12345), 429);
+    throw new RestKitException(array('message' => 'You are overloading my API', 'errorCode' => 12345), 666);
+
+Will produce the following XML
+
+    <response>
+      <status>666</status>
+      <message>You are overloading my API</message>
+      <code>12345</code>
+      <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
+    </response>
 
 ## URI options ##
 

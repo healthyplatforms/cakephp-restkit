@@ -65,8 +65,8 @@ Will produce:
           <id>2</id>
           <username>Ceeram</username>
         </user>
-      <users>
-    <response>
+      </users>
+    </response>
 
 
 ### Custom Exceptions

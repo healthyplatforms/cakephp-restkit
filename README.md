@@ -43,7 +43,7 @@ All options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.
 
 ## Usage
 
-### Automatic serializing
+### Response rendering
 
 Never worry about reformatting your arrays for _serialize() again. RestKit will automagically
 handle all array reformatting for you.

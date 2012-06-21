@@ -47,6 +47,8 @@ Options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.php.
 
 ## Usage
 
+### Automatic serializing
+
 Never worry about reformatting arrays for _serialize() again. RestKit will automagically
 handle all array reformatting for you.
 
@@ -66,12 +68,13 @@ options will be ignored):
         $this->RestKit->render(array('users' => $users));
     }
 
+### Custom Exceptions
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:
 
     throw new RestKitException(array('message' => 'You are overloading my API', 'errorCode' => 12345), 666);
 
-Will produce the following XML
+Which would produce the following XML
 
     <response>
       <status>666</status>
@@ -80,7 +83,7 @@ Will produce the following XML
       <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
     </response>
 
-	## URI options ##
+## URI options ##
 
 RestKit supports validation for the following URI options out-of-the-box.
 

@@ -27,7 +27,7 @@ Change the default ExceptionHandler in /app/Config/core.php:
 
     Configure::write('Exception', array(
         'handler' => 'ErrorHandler::handleException',
-        'renderer' => 'RestKit.RestKitExceptionRenderer',		// TODO: put into Plugin's instructions
+        'renderer' => 'RestKit.RestKitExceptionRenderer',
         'log' => true
     ));
 

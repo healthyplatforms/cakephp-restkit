@@ -57,19 +57,6 @@ handle all array reformatting for you.
         $this->RestKit->render(array('users' => $users));
     }
 
-### Validating URI parameters
-
-Validate URI options by simply defining your default options (all others passed
-options will be ignored):
-
-    function index() {
-        $options = $this->RestKit->parseUriOptions(array(
-            'sort' => 'asc',
-            'limit' => 10));
-        $users = $this->User->find('all');
-        $this->RestKit->render(array('users' => $users));
-    }
-
 ### Custom Exceptions
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:
@@ -85,9 +72,22 @@ To return the following XML along with a Response Header using Status Code 666 a
       <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
     </response>
 
-## URI options ##
+**Please note** that you can add your own Status Codes and messages by defining them in bootstrap.php
 
-RestKit supports validation for the following URI options out-of-the-box.
+### Validating URI parameters
+
+Validate URI options by simply defining your default options (all others passed
+options will be ignored):
+
+    function index() {
+        $options = $this->RestKit->parseUriOptions(array(
+            'sort' => 'asc',
+            'limit' => 10));
+        $users = $this->User->find('all');
+        $this->RestKit->render(array('users' => $users));
+    }
+
+RestKit supports out-of-the box validation for the following URI options
 
 * **sort** either asc or desc
 

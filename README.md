@@ -47,7 +47,7 @@ Options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.php.
 
 ## Usage
 
-Never worry about reformatting arrays for _serialize(). RestKit will automagically
+Never worry about reformatting arrays for _serialize() again. RestKit will automagically
 handle all array reformatting for you.
 
     function index() {
@@ -80,7 +80,7 @@ Will produce the following XML
       <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
     </response>
 
-## URI options ##
+	## URI options ##
 
 RestKit supports validation for the following URI options out-of-the-box.
 

@@ -10,8 +10,6 @@ This plugin will instantly add some spice to the default Cake REST functionality
 
 The RestKit plugin requires CakePHP 2.2
 
-# Documentation
-
 ## Installation
 
 Clone the repository into /app/Plugin/RestKit:
@@ -34,6 +32,8 @@ Change the default ExceptionHandler in /app/Config/core.php:
     ));
 
 
+# Documentation
+
 ## Configuration
 
 All options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.php.
@@ -41,7 +41,7 @@ All options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.
 * **enableOptionValidation**: set to 'true' to turn validation on
 * HTTP Status Codes
 
-# Usage
+## Usage
 
 ### Automatic serializing
 
@@ -87,7 +87,7 @@ RestKit supports out-of-the box validation for the following URI options
 
 * **sort** either asc or desc
 
-## TODO ##
+# TODO
 
 * add errorcode system to make them selectable in your IDE and to prevent having to pass them as a parameter
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)

@@ -49,7 +49,7 @@ Options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.php.
 
 ### Automatic serializing
 
-Never worry about reformatting arrays for _serialize() again. RestKit will automagically
+Never worry about reformatting your arrays for _serialize() again. RestKit will automagically
 handle all array reformatting for you.
 
     function index() {

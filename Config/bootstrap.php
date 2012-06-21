@@ -9,7 +9,7 @@ Configure::write('RestKit', array(
     'version' => '1.0.0',
     'enableOptionValidation' => true,
 
-    // change or define additional HTTP Status Codes here
+    // Change the default CakePHP status codes (commented ones) or add your own
     'httpCodes' => array(
 //		100 => 'Continue',
 //		101 => 'Switching Protocols',

@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 Configure::write('RestKit', array(
     'prefix' => 'v1',
     'version' => '1.0.0',

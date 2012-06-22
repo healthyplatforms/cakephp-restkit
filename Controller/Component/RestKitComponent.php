@@ -19,7 +19,7 @@ class RestKitComponent extends Component {
 
 /**
 * startup() is used to make the calling Controller available as $this->controller
-* and to return 404 errors for all non JSON/XML requests (when enabled in bootstrap.php)
+* and to return 404 errors for all non JSON/XML requests (when enabled in config.php)
 *
 * NOTE: startup() is called before the controller's beforeFilter()
 *
@@ -77,7 +77,7 @@ class RestKitComponent extends Component {
 	}
 
 /**
-* _renderViewlessData() handles setting data and _serialize logic needed to render viewless XML/JSON responses
+* _setViewData() handles setting data and _serialize logic needed to render viewless XML/JSON responses
 *
 * TODO include debug information only if enabled in app.config(?)
 *

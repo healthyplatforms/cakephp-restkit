@@ -8,7 +8,7 @@
  */
 	Router::mapResources(
 		array('Users','Exampreps'),
-		array('prefix' => '/v1/')
+		array('prefix' => '/' . Configure::read('RestKit.prefix') . '/')
 	);
 
 	// enable extensions

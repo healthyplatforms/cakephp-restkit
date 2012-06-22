@@ -1,6 +1,6 @@
 # CakePHP RestKit plugin
 
-Need a full-featured REST API? Just load this plugin and start delivering content instantly ;)
+Need a full-featured REST API? Just load this plugin and start delivering XML/Json instantly ;)
 
 ## Features
 

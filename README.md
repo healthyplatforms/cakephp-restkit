@@ -7,6 +7,7 @@ Need a full-featured REST API? Just load this plugin and start delivering conten
 * custom HTTP Status Codes
 * custom XML/Json errors (with the RestKitExceptionHandler)
 * vaidation rules for URI parameters
+* prefix routing (e.g. /v1/)
 
 ## Requirements
 
@@ -99,9 +100,8 @@ RestKit supports out-of-the box validation for the following URI options
 
 * add errorcode system to make them selectable in your IDE and to prevent having to pass them as a parameter
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
-* add prefix route (e.g. /v1/)
 * add security (deny all unless authorized)
 * add OAuth token handling (needs separate app with OAuth server and login functionality)
 * extend validations for known URI-options
 * enable/disable URI-options from the config
-* add tests
+* add unit tests

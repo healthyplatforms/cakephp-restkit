@@ -36,7 +36,7 @@ Change the default ExceptionHandler in /app/Config/core.php:
 
 ## Configuration
 
-All options can be configurated by editing /app/Plugin/RestKit/Config/bootstrap.php.
+All options can be configurated by editing /app/Plugin/RestKit/Config/config.php.
 
 * **enableOptionValidation**: set to 'true' to turn validation on
 * HTTP Status Codes
@@ -111,5 +111,5 @@ RestKit supports out-of-the box validation for the following URI options
 * add security (deny all unless authorized)
 * add OAuth token handling (needs separate app with OAuth server and login functionality)
 * extend validations for known URI-options
-* enable/disable URI-options from the bootstrap
+* enable/disable URI-options from the config
 * add tests

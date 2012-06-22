@@ -39,7 +39,7 @@ All options can be configurated by editing /app/Plugin/RestKit/Config/config.php
 ### Response rendering
 
 Never worry about reformatting your arrays for _serialize() again. RestKit will automagically
-handle all array reformatting for you.
+handle all array reformatting for you to produce correctly encapsulated XML responses.
 
     function index() {
         $users = $this->User->find('all');
@@ -101,7 +101,8 @@ RestKit supports out-of-the box validation for the following URI options
 * add errorcode system to make them selectable in your IDE and to prevent having to pass them as a parameter
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * add security (deny all unless authorized)
-* add OAuth token handling (needs separate app with OAuth server and login functionality)
+* add OAuth token handling (will require a separate app with OAuth server and login functionality)
 * extend validations for known URI-options
 * enable/disable URI-options from the config
 * add unit tests
+* make prefixed route exclusive when enabled (making the default path no longer available)

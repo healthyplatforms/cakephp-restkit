@@ -1,6 +1,7 @@
 <?php
 
 $config['RestKit'] = array(
+
     'prefix' => 'v1',
     'version' => '1.0.0',
     'enableOptionValidation' => true,
@@ -49,5 +50,4 @@ $config['RestKit'] = array(
 //		504 => 'Gateway Time-out',
 		666 => 'Something very evil',
     )
-
 );

@@ -2,9 +2,11 @@
 
 Need a full-featured REST API? Just load this plugin and start delivering content instantly ;)
 
-* return custom HTTP Status Codes
-* return custom XML/Json errors using a custom ExceptionHandler
-* use vaidation rules to handle URI options
+## Features
+
+* custom HTTP Status Codes
+* custom XML/Json errors (with the RestKitExceptionHandler)
+* vaidation rules for URI parameters
 
 ## Requirements
 

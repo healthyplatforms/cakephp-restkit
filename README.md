@@ -20,7 +20,7 @@ Clone the repository into /app/Plugin/RestKit:
 Enable the RestKit plugin in /app/Config/bootstrap.php:
 
     CakePlugin::load(array(
-        'RestKit' => array('bootstrap' => true),
+        'RestKit' => array('bootstrap' => true, 'routes' => true),
     ));
 
 Change the default ExceptionHandler in /app/Config/core.php:

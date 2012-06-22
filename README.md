@@ -1,6 +1,6 @@
 # CakePHP RestKit plugin
 
-This plugin will instantly add some spice to the default Cake REST functionality:
+Need a full-featured REST API? Just load this plugin and start delivering content instantly ;)
 
 * return custom HTTP Status Codes
 * return custom XML/Json errors using a custom ExceptionHandler
@@ -16,21 +16,11 @@ Clone the repository into /app/Plugin/RestKit:
 
      git submodule add git@github.com:bravo-kernel/cakephp-restkit.git Plugin/RestKit
 
-
 Enable the RestKit plugin in /app/Config/bootstrap.php:
 
     CakePlugin::load(array(
         'RestKit' => array('bootstrap' => true, 'routes' => true),
     ));
-
-Change the default ExceptionHandler in /app/Config/core.php:
-
-    Configure::write('Exception', array(
-        'handler' => 'ErrorHandler::handleException',
-        'renderer' => 'RestKit.RestKitExceptionRenderer',
-        'log' => true
-    ));
-
 
 # Documentation
 

@@ -7,7 +7,7 @@ Need a full-featured REST API? Just load this plugin and start delivering conten
 * custom HTTP Status Codes
 * custom XML/Json errors (with the RestKitExceptionHandler)
 * vaidation rules for URI parameters
-* prefix routing (e.g. /v1/)
+* version prefixing (e.g. /v1/)
 
 ## Requirements
 

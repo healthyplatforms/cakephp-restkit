@@ -190,4 +190,35 @@ class RestKitComponent extends Component {
 		}
 		return $modelMerged;
 	}
+
+
+/**
+ * routes() is used to provide the functionality normally used in routes.php like
+ * setting the allowed extensions, prefixing, etc.
+ */
+    public static function routes() {
+	   self::_mapResources();
+	   self::_enableExtensions();
+
+    }
+/**
+ * _mapResources() is used to enable REST for controllers + the prefix routing (if enabled)
+ */
+	private static function _mapResources() {
+		Router::mapResources(
+			array('Users','Exampreps'),
+			array('prefix' => '/' . Configure::read('RestKit.prefix') . '/')
+		);
+	}
+
+/**
+ * _enableExtensions() is used to enable servicing only those extensions that are
+ * specified in config.php
+ *
+ * @todo get extensions from config
+ */
+	private static function _enableExtensions(){
+		Router::parseExtensions('xml');
+		Router::setExtensions(array('json'));
+	}
 }

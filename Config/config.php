@@ -2,7 +2,12 @@
 
 $config['RestKit'] = array(
 
-    'prefix' => 'v1',
+    'Request' => array(
+	'enabledExtensions' => array('xml', 'json'),
+	'enablePrefix' => true,
+	'prefix' => 'v1',
+	),
+
     'version' => '1.0.0',
     'enableOptionValidation' => true,
 

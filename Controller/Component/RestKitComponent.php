@@ -108,7 +108,7 @@ class RestKitComponent extends Component {
 			// reformat array to make it compatible with testRenderWithoutViewMulitple format
 			$modelLower = Inflector::singularize($arrayKey);    // e.g. user
 			$modelName = Inflector::camelize($modelLower);      // e.g. User
-			//if (count($arrayContent[0]) == 0){                  // extract single root-elements as produced by findById()
+			//if (count($arrayContent[0]) == 0){                // extract single root-elements as produced by findById()
 			if (!array_key_exists('0', $arrayContent)) {
 				$extracted = array(
 				    $modelLower => Set::extract($modelName, $arrayContent)
@@ -202,13 +202,20 @@ class RestKitComponent extends Component {
 
     }
 /**
- * _mapResources() is used to enable REST for controllers + the prefix routing (if enabled)
+ * _mapResources() is used to enable REST for controllers + enable prefix routing (if enabled)
  */
 	private static function _mapResources() {
-		Router::mapResources(
-			array('Users','Exampreps'),
-			array('prefix' => '/' . Configure::read('RestKit.prefix') . '/')
-		);
+
+		if (Configure::read('RestKit.Request.enablePrefix') == true){
+			Router::mapResources(
+				array('Users','Exampreps'),
+				array('prefix' => '/' . Configure::read('RestKit.Request.prefix') . '/')
+			);
+		}else{
+			Router::mapResources(
+				array('Users','Exampreps')
+			);
+		}
 	}
 
 /**
@@ -218,7 +225,7 @@ class RestKitComponent extends Component {
  * @todo get extensions from config
  */
 	private static function _enableExtensions(){
-		Router::parseExtensions('xml');
-		Router::setExtensions(array('json'));
+		Router::parseExtensions();
+		Router::setExtensions(Configure::read('RestKit.Request.enabledExtensions'));
 	}
 }

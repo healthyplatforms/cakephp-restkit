@@ -1,10 +1,8 @@
 <?php
 
 /**
- * Set up REST configuration as described in http://book.cakephp.org/2.0/en/development/rest.html
- *
- * @todo move logic into component (using Use::) so we can expand logic
- * (e.g. stripping leading plugin paths, etc)
+ * Set up required REST configuration using mapResources() and enableExtensions()
+ * as described in http://book.cakephp.org/2.0/en/development/rest.html
  */
 
 App::uses('RestKitComponent', 'RestKit.Controller/Component');

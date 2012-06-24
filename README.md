@@ -27,7 +27,7 @@ Enable the RestKit plugin in /app/Config/bootstrap.php:
 
 Disable CakePHP default routing in /app/Config/routes.php:
 
-    	//require CAKE . 'Config' . DS . 'routes.php';
+    //require CAKE . 'Config' . DS . 'routes.php';
 
 
 # Documentation

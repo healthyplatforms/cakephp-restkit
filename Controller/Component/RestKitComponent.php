@@ -206,12 +206,18 @@ class RestKitComponent extends Component {
  */
 	private static function _mapResources() {
 
-		if (Configure::read('RestKit.Request.enablePrefix') == true){
+		if (Configure::read('RestKit.Request.prefix') == true){
 			Router::mapResources(
 				array('Users','Exampreps'),
 				array('prefix' => '/' . Configure::read('RestKit.Request.prefix') . '/')
 			);
+
+			// skip loading Cake's default routes when forcePrefix is disabled in config
+			if (Configure::read('RestKit.Request.forcePrefix') == false){
+				require CAKE . 'Config' . DS . 'routes.php';
+			}
 		}else{
+			require CAKE . 'Config' . DS . 'routes.php';	// load CakePHP''s default routes
 			Router::mapResources(
 				array('Users','Exampreps')
 			);

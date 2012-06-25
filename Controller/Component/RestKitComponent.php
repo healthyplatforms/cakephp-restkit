@@ -94,7 +94,7 @@ class RestKitComponent extends Component {
 *
 * @param type $arrays
 */
-	private function _setViewData($arrays) {
+	protected function _setViewData($arrays) {
 
 		// add debug information to the JSON response
 		$errors = $this->getErrors();

@@ -47,8 +47,8 @@ class RestKitComponentTest extends CakeTestCase {
 				'id' => 1,
 				'username' => 'bravo_kernel'));
 
-		$expected = array
-			('user' => array(
+		$expected = array(
+			'user' => array(
 				array( 'id' => 1, 'username' => 'bravo_kernel')));
 
 		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findByIdResult);

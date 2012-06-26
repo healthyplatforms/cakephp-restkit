@@ -29,27 +29,29 @@ class RestKitComponentTest extends CakeTestCase {
 
 		// Test reformatting of single dimension find('all') result
 		$findAllResult  = array(
-			array('User' => array('id' => 1, 'name' => 'bravo_kernel')),
-			array('User' => array('id' => 2, 'name' => 'ceeram'))
+			array('User' => array('id' => 1, 'username' => 'bravo_kernel')),
+			array('User' => array('id' => 2, 'username' => 'ceeram'))
 		);
-		$expected = array ('user' => array(
+		$expected = array(
+			'user' => array(
 				array( 'id' => 1, 'username' => 'bravo_kernel'),
 				array( 'id' => 2, 'username' => 'ceeram')));
 
-		$output = $this->RestKitComponent->publicSetViewData($findAllResult);
+		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findAllResult);
 		$this->assertSame($expected, $output);
 
 
 		// Test reformatting of single dimension findById() result
-		$findByIdResult = array('User' => array(
-			'id' => 1,
-			'username' => 'bravo_kernel'));
+		$findByIdResult = array(
+			'User' => array(
+				'id' => 1,
+				'username' => 'bravo_kernel'));
 
-		$expected = array ('user' => array(
-			'id' => 1,
-			'username' => 'bravo_kernel'));
+		$expected = array
+			('user' => array(
+				array( 'id' => 1, 'username' => 'bravo_kernel')));
 
-		$output = $this->RestKitComponent->publicSetViewData($findByIdResult);
+		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findByIdResult);
 		$this->assertSame($expected, $output);
 		}
 
@@ -62,7 +64,9 @@ class RestKitComponentTest extends CakeTestCase {
 }
 	
 class ExtendedRestKitComponent extends RestKitComponent {
-	public function publicSetViewData($arrays) {
-		return $this->_setViewData($arrays);
-	}
+
+	// placeholder example for testing protected component functions
+	//public function publicSetViewData($arrays) {
+	//	return $this->_setViewData($arrays);
+	//}
 }

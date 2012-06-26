@@ -95,7 +95,7 @@ class RestKitComponent extends Component {
 * @param type $arrays
 */
 	protected function _setViewData($arrays) {
-
+		
 		// add debug information to the JSON response
 		$errors = $this->getErrors();
 		if (!empty($errors)) {
@@ -109,15 +109,12 @@ class RestKitComponent extends Component {
 			$modelLower = Inflector::singularize($arrayKey);    // e.g. user
 			$modelName = Inflector::camelize($modelLower);      // e.g. User
 			
-			$extracted = $this->formatFindResultForSimpleXML($arrayContent);
-
-			// make data available for the view and remember the keyname for _serialize later
-			$this->controller->set(array($arrayKey => $extracted));
-			array_push($serializeKeynames, $arrayKey);
+			$extracted = $this->formatFindResultForSimpleXML($arrayContent);	// reformat Cake find() results for SimpleXML
+			$this->controller->set(array($arrayKey => $extracted));				// make data available for the view
+			array_push($serializeKeynames, $arrayKey);							// remember the keyname for _serialize() later
 		}
-
-		// _serialize all arrays at once
-		$this->controller->set(array('_serialize' => $serializeKeynames));      // serialize all arrays at once
+		// we MUST _serialize all arrays at once
+		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
 	
@@ -128,11 +125,10 @@ class RestKitComponent extends Component {
 	public function formatFindResultForSimpleXML($findResult){
 
 		if (Hash::check($findResult, '{s}')){										// single result as produced by e.g. findById()
-			$reformatted = array('user' =>  Hash::extract($findResult, '{s}'));
+			return array('user' =>  Hash::extract($findResult, '{s}'));
 		}else{
-			$reformatted = array('user' =>  Hash::extract($findResult, '{n}.{s}'));
+			return array('user' =>  Hash::extract($findResult, '{n}.{s}'));
 		}
-		return $reformatted;
 	}
 	
 	

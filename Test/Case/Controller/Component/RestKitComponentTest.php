@@ -27,7 +27,7 @@ class RestKitComponentTest extends CakeTestCase {
 
 	public function testReformatArrays() {
 
-		// Test our adjust method with different parameter settings
+		// Test reformatting of single dimension find('all') result
 		$findAllResult  = array(
 			array('User' => array('id' => 1, 'name' => 'bravo_kernel')),
 			array('User' => array('id' => 2, 'name' => 'ceeram'))
@@ -36,9 +36,22 @@ class RestKitComponentTest extends CakeTestCase {
 				array( 'id' => 1, 'username' => 'bravo_kernel'),
 				array( 'id' => 2, 'username' => 'ceeram')));
 
-		$output = $this->RestKitComponent->publicSetViewData($findAllResult);		// werkt niet want private
+		$output = $this->RestKitComponent->publicSetViewData($findAllResult);
 		$this->assertSame($expected, $output);
-	}
+
+
+		// Test reformatting of single dimension findById() result
+		$findByIdResult = array('User' => array(
+			'id' => 1,
+			'username' => 'bravo_kernel'));
+
+		$expected = array ('user' => array(
+			'id' => 1,
+			'username' => 'bravo_kernel'));
+
+		$output = $this->RestKitComponent->publicSetViewData($findByIdResult);
+		$this->assertSame($expected, $output);
+		}
 
 	public function tearDown() {
 		parent::tearDown();

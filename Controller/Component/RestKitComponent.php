@@ -108,16 +108,8 @@ class RestKitComponent extends Component {
 			// reformat array to make it compatible with testRenderWithoutViewMulitple format
 			$modelLower = Inflector::singularize($arrayKey);    // e.g. user
 			$modelName = Inflector::camelize($modelLower);      // e.g. User
-			//if (count($arrayContent[0]) == 0){                // extract single root-elements as produced by findById()
-			if (!array_key_exists('0', $arrayContent)) {
-				$extracted = array(
-				    $modelLower => Set::extract($modelName, $arrayContent)
-				);
-			} else {	   // extract multiple root-elements as produced by find('all')
-				$extracted = array(
-				    $modelLower => Set::extract('{n}.' . $modelName, $arrayContent)
-				);
-			}
+			
+			$extracted = $this->formatFindResultForSimpleXML($arrayContent);
 
 			// make data available for the view and remember the keyname for _serialize later
 			$this->controller->set(array($arrayKey => $extracted));
@@ -128,6 +120,22 @@ class RestKitComponent extends Component {
 		$this->controller->set(array('_serialize' => $serializeKeynames));      // serialize all arrays at once
 	}
 
+	
+/**
+ * formatFindResultForSimpleXML() reformats default CakePHP array-format produced
+ * by find() queries into a format that is suitable for SimpleXML 
+ */
+	public function formatFindResultForSimpleXML($findResult){
+
+		if (Hash::check($findResult, '{s}')){										// single result as produced by e.g. findById()
+			$reformatted = array('user' =>  Hash::extract($findResult, '{s}'));
+		}else{
+			$reformatted = array('user' =>  Hash::extract($findResult, '{n}.{s}'));
+		}
+		return $reformatted;
+	}
+	
+	
 /**
  * _checkExtension() is used to:
  * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)

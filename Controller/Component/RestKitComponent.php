@@ -92,10 +92,13 @@ class RestKitComponent extends Component {
 * NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
 * $users = array('user' => Set::extract('{n}.User', $users));
 *
+* @todo make the root-node ($plural) optional using passed parameter to prevent 
+* for example a <debugs> tag where we would like to return a <debug> root tag 
+*
 * @param type $arrays
 */
 	protected function _setViewData($arrays) {
-		
+
 		// add debug information to the JSON response
 		$errors = $this->getErrors();
 		if (!empty($errors)) {
@@ -103,34 +106,34 @@ class RestKitComponent extends Component {
 		}
 
 		$serializeKeynames = array();
-		foreach ($arrays as $arrayKey => $arrayContent) {
-
-			// reformat array to make it compatible with testRenderWithoutViewMulitple format
-			$modelLower = Inflector::singularize($arrayKey);    // e.g. user
-			$modelName = Inflector::camelize($modelLower);      // e.g. User
-			
+		foreach ($arrays as $arrayContent) {
+		
 			$extracted = $this->formatFindResultForSimpleXML($arrayContent);	// reformat Cake find() results for SimpleXML
-			$this->controller->set(array($arrayKey => $extracted));				// make data available for the view
-			array_push($serializeKeynames, $arrayKey);							// remember the keyname for _serialize() later
+			//pr($extracted);	// extracted now good with generic model name (still upper)
+			
+			$plural = strtolower(Inflector::pluralize(key($extracted)));
+			
+			$this->controller->set(array($plural => $extracted));				// make data available for the view
+			array_push($serializeKeynames, $plural);							// remember the keyname for _serialize() later
 		}
 		// we MUST _serialize all arrays at once
 		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
-	
+
 /**
  * formatFindResultForSimpleXML() reformats default CakePHP array-format produced
  * by find() queries into a format that is suitable for SimpleXML 
  */
 	public function formatFindResultForSimpleXML($findResult){
-
 		if (Hash::check($findResult, '{s}')){										// single result as produced by e.g. findById()
 			return array('user' =>  Hash::extract($findResult, '{s}'));
 		}else{
-			return array('user' =>  Hash::extract($findResult, '{n}.{s}'));
+			$model = strtolower(key($findResult[0]));
+			$model = Inflector::singularize($model);			
+			return array($model =>  Hash::extract($findResult, '{n}.{s}'));
 		}
 	}
-	
 	
 /**
  * _checkExtension() is used to:

@@ -32,24 +32,21 @@ class RestKitComponentTest extends CakeTestCase {
 			array('User' => array('id' => 1, 'username' => 'bravo_kernel')),
 			array('User' => array('id' => 2, 'username' => 'ceeram'))
 		);
-		$expected = array(
-			'user' => array(
-				array( 'id' => 1, 'username' => 'bravo_kernel'),
-				array( 'id' => 2, 'username' => 'ceeram')));
+		$expected = array('user' => array(
+			array( 'id' => 1, 'username' => 'bravo_kernel'),
+			array( 'id' => 2, 'username' => 'ceeram')));
 
 		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findAllResult);
 		$this->assertSame($expected, $output);
 
 
 		// Test reformatting of single dimension findById() result
-		$findByIdResult = array(
-			'User' => array(
+		$findByIdResult = array('User' => array(
 				'id' => 1,
 				'username' => 'bravo_kernel'));
 
-		$expected = array(
-			'user' => array(
-				array( 'id' => 1, 'username' => 'bravo_kernel')));
+		$expected = array('user' => array(
+			array( 'id' => 1, 'username' => 'bravo_kernel')));
 
 		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findByIdResult);
 		$this->assertSame($expected, $output);
@@ -62,7 +59,7 @@ class RestKitComponentTest extends CakeTestCase {
 		unset($this->Controller);
 	}
 }
-	
+
 class ExtendedRestKitComponent extends RestKitComponent {
 
 	// placeholder example for testing protected component functions

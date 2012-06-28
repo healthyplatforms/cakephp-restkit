@@ -10,6 +10,10 @@ class TestRestKitController extends Controller {
 	public $paginate = null;
 }
 
+/*
+ * @todo add tests for single, multi, single array combination
+ * @todo add hardening tests for null, false, array arguments
+ */
 class RestKitComponentTest extends CakeTestCase {
 	public $RestKitComponent = null;
 	public $Controller = null;

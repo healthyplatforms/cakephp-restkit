@@ -92,8 +92,8 @@ class RestKitComponent extends Component {
 * NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
 * $users = array('user' => Set::extract('{n}.User', $users));
 *
-* @todo make the root-node ($plural) optional using passed parameter to prevent 
-* for example a <debugs> tag where we would like to return a <debug> root tag 
+* @todo make the root-node ($plural) optional using passed parameter to prevent
+* for example a <debugs> tag where we would like to return a <debug> root tag
 *
 * @param type $arrays
 */
@@ -106,35 +106,41 @@ class RestKitComponent extends Component {
 		}
 
 		$serializeKeynames = array();
-		foreach ($arrays as $arrayContent) {
-		
-			$extracted = $this->formatFindResultForSimpleXML($arrayContent);	// reformat Cake find() results for SimpleXML
-			//pr($extracted);	// extracted now good with generic model name (still upper)
-			
-			$plural = strtolower(Inflector::pluralize(key($extracted)));
-			
-			$this->controller->set(array($plural => $extracted));				// make data available for the view
-			array_push($serializeKeynames, $plural);							// remember the keyname for _serialize() later
+		foreach ($arrays as $key => $array) {
+
+			$extracted = $this->formatFindResultForSimpleXML($array);	// reformat Cake find() results for SimpleXML
+
+			// if $key is a string we use it as the <rootnode>, otherwise we
+			// use the Pluralized modelname
+			if (!is_string($key)){
+				$key = strtolower(Inflector::pluralize(key($extracted)));
+			}
+
+			$this->controller->set(array($key => $extracted));	// make data available for the view
+			array_push($serializeKeynames, $key);			// remember the keyname for mass _serialize() later
 		}
 		// we MUST _serialize all arrays at once
 		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
-
 /**
  * formatFindResultForSimpleXML() reformats default CakePHP array-format produced
- * by find() queries into a format that is suitable for SimpleXML 
+ * by find() queries into a format that is suitable for SimpleXML
+ * @param mixed CakePHP find() result
+ * @param string of rootNode. Optional, otherwise uses the plural of
+ *
  */
 	public function formatFindResultForSimpleXML($findResult){
+
 		if (Hash::check($findResult, '{s}')){										// single result as produced by e.g. findById()
 			return array('user' =>  Hash::extract($findResult, '{s}'));
 		}else{
 			$model = strtolower(key($findResult[0]));
-			$model = Inflector::singularize($model);			
+			$model = Inflector::singularize($model);
 			return array($model =>  Hash::extract($findResult, '{n}.{s}'));
 		}
 	}
-	
+
 /**
  * _checkExtension() is used to:
  * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)

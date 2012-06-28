@@ -43,7 +43,7 @@ All options can be configurated by editing /app/Plugin/RestKit/Config/config.php
 
 ### Response rendering
 
-Never worry about reformatting your arrays for _serialize() again. RestKit will automagically
+Never worry about reformatting your arrays for SimpleXML again. RestKit will automagically
 handle all array reformatting for you to produce correctly encapsulated XML responses.
 
 **Example1:**

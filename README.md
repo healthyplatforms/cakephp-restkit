@@ -120,7 +120,7 @@ options will be ignored):
             'sort' => 'asc',
             'limit' => 10));
         $users = $this->User->find('all');
-        $this->RestKit->render(array('users' => $users));
+        $this->RestKit->render(array('users'));
     }
 
 RestKit supports out-of-the box validation for the following URI options
@@ -135,5 +135,5 @@ RestKit supports out-of-the box validation for the following URI options
 * add OAuth token handling (will require a separate app with OAuth server and login functionality)
 * extend validations for known URI-options
 * enable/disable URI-options from the config
-* add unit tests
-* make prefixed route exclusive when enabled (making the default path no longer available)
+* update/extend unit tests
+* make prefixed route exclusive when enabled (making the default (direct) Cake routes to the controllers no longer available)

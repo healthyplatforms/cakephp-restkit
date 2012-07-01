@@ -2,6 +2,15 @@
 
 Need a full-featured REST API? Just load this plugin and start delivering XML/Json instantly ;)
 
+## Version ##
+
+This plugin is heavily under construction so do not use it unless you know what you are doing.
+
+Current limitations:
+
+* XML transformations supported for CakePHP find() results with recursive => 0 only.
+
+
 ## Features
 
 * custom HTTP Status Codes

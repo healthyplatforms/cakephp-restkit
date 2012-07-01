@@ -8,7 +8,7 @@ This plugin is heavily under construction so do not use it unless you know what 
 
 Current limitations:
 
-* SimpleXML transformations support limited to non-recursive CakePHP find() results
+* automagic SimpleXML transformations limited to non-recursive CakePHP find() results
 
 
 ## Features

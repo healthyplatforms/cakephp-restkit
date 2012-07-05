@@ -8,8 +8,7 @@ This plugin is heavily under construction so do not use it unless you value your
 
 Current limitations:
 
-* automagic SimpleXML generation tested for CakePHP find() results with 'recursive' 0 and 1 only
-* automagic SimpleXML generation broken for CakePHP find('first') and findById() results
+* automagic SimpleXML reformatting for CakePHP find() results limited to 'recursive' levels 0 and 1
 
 ## Features
 

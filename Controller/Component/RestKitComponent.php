@@ -77,26 +77,24 @@ class RestKitComponent extends Component {
 	}
 
 /**
-* _setViewData() handles setting data and _serialize logic needed to render viewless XML/JSON responses
-*
-* TODO include debug information only if enabled in app.config(?)
-*
-* The following will be generated when a single array is passed
-* $this->set(array('users' => $users));
-* $this->set(array('_serialize' => array('users')));
-*
-* The following will be generated when multiple arrays are passed
-* $this->set(array('users' => $users, 'debug' => $debug));
-* $this->set(array('_serialize' => array('users', 'debug')));
-*
-* NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
-* $users = array('user' => Set::extract('{n}.User', $users));
-*
-* @todo make the root-node ($plural) optional using passed parameter to prevent
-* for example a <debugs> tag where we would like to return a <debug> root tag
-*
-* @param type $arrays
-*/
+ * _setViewData() handles setting data and _serialize logic needed to render viewless XML/JSON responses 
+ *
+ * The following will be generated when a single array is passed
+ * $this->set(array('users' => $users));
+ * $this->set(array('_serialize' => array('users')));
+ *
+ * The following will be generated when multiple arrays are passed
+ * $this->set(array('users' => $users, 'debug' => $debug));
+ * $this->set(array('_serialize' => array('users', 'debug')));
+ *
+ * NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
+ * $users = array('user' => Set::extract('{n}.User', $users));
+ *
+ * @todo include debug information only if enabled in configuration file
+ *
+ * @param mixed optional string used as the SimpleXml rootnode (e.g. users for <users>)
+ * @param mixed array with default CakePHP find() result
+ */
 	protected function _setViewData($arrays) {
 
 		// add debug information to the JSON response
@@ -108,36 +106,60 @@ class RestKitComponent extends Component {
 		$serializeKeynames = array();
 		foreach ($arrays as $key => $array) {
 
-			$extracted = $this->formatFindResultForSimpleXML($array);	// reformat Cake find() results for SimpleXML
+			// reformat Cake find() results for SimpleXML
+			$simpleXml = $this->formatFindResultForSimpleXML($array);	
 
-			// if $key is a string we use it as the <rootnode>, otherwise we
-			// use the Pluralized modelname
+			// if $key is a string we use it as the <rootnode>, otherwise we use the returned pluralized modelname
 			if (!is_string($key)){
-				$key = strtolower(Inflector::pluralize(key($extracted)));
+				$key = $simpleXml['root'];
 			}
-
-			$this->controller->set(array($key => $extracted));	// make data available for the view
-			array_push($serializeKeynames, $key);			// remember the keyname for mass _serialize() later
+			$this->controller->set(array($key => $simpleXml['content']));	// make data available for the view
+			array_push($serializeKeynames, $key);							// remember the keyname for mass _serialize() later
 		}
 		// we MUST _serialize all arrays at once
 		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
 /**
- * formatFindResultForSimpleXML() reformats default CakePHP array-format produced
- * by find() queries into a format that is suitable for SimpleXML
- * @param mixed CakePHP find() result
- * @param string of rootNode. Optional, otherwise uses the plural of
+ * formatFindResultForSimpleXML() reformats default CakePHP arrays produced
+ * by find() queries into a format that is suitable for passing to SimpleXML
  *
+ * @param mixed CakePHP find() result
+ * @return mixed array with 'root' key containing  string for rootnode (e.g. users)
+ * @return mixed array with 'content' key containing the array suitable for passing to SimpleXml
  */
-	public function formatFindResultForSimpleXML($findResult){
+	public function formatFindResultForSimpleXML($cakeFindResult){
 
-		if (Hash::check($findResult, '{s}')){										// single result as produced by e.g. findById()
-			return array('user' =>  Hash::extract($findResult, '{s}'));
+		// check for a single result first (as produced by findById() and find('first')
+		if (Hash::check($cakeFindResult, '{s}')){		
+			$tempArray = array('user' =>  Hash::extract($cakeFindResult, '{s}'));
 		}else{
-			$model = strtolower(key($findResult[0]));
-			$model = Inflector::singularize($model);
-			return array($model =>  Hash::extract($findResult, '{n}.{s}'));
+			$recordIndex = 0;								// keep track of the current record so we can point to the correct array item
+			$simpleXmlArray = array();						// array to fill with per-record SimpleXml arrays
+			foreach ($cakeFindResult as $foundRecord){
+				$modelIndex = 0;
+
+				foreach (array_keys($cakeFindResult[0]) as $modelKey){			// multiple root Models mean associations present (recursive > 1)
+					$modelUnderscored = Inflector::underscore($modelKey);		//e.g. ExamprepCustom to examprep_custom
+					$extracted = array($modelUnderscored =>  Hash::extract($foundRecord, "{$modelKey}"));
+
+					// first Model needs to be processed differently
+					if ($modelIndex == 0){
+						$rootKey = $modelUnderscored;
+						$rootKeyPluralized = Inflector::pluralize($rootKey);										// store to return as the root-node later (e.g. users)
+						$simpleXmlArray[$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}");	// extract only array-keys to prevent double <tags>
+					}else{
+						$pluralized = Inflector::pluralize($modelUnderscored);
+						$simpleXmlArray[$rootKey][$recordIndex][$pluralized]= $extracted;						
+					}
+					$modelIndex++;
+				}
+				$recordIndex++;
+			}
+			return (array(
+				'root' => $rootKeyPluralized,
+				'content' => $simpleXmlArray
+			));
 		}
 	}
 

@@ -36,11 +36,12 @@ class RestKitComponentTest extends CakeTestCase {
 			array('User' => array('id' => 1, 'username' => 'bravo_kernel')),
 			array('User' => array('id' => 2, 'username' => 'ceeram'))
 		);
-		$expected = array('user' => array(
-			array( 'id' => 1, 'username' => 'bravo_kernel'),
-			array( 'id' => 2, 'username' => 'ceeram')));
+		$expected = array('users' => array(
+			'user' => array(
+				array( 'id' => 1, 'username' => 'bravo_kernel'),
+				array( 'id' => 2, 'username' => 'ceeram'))));
 
-		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findAllResult);
+		$output = $this->RestKitComponent->formatCakeFindResultForSimpleXML($findAllResult);
 		$this->assertSame($expected, $output);
 
 
@@ -49,10 +50,11 @@ class RestKitComponentTest extends CakeTestCase {
 				'id' => 1,
 				'username' => 'bravo_kernel'));
 
-		$expected = array('user' => array(
-			array( 'id' => 1, 'username' => 'bravo_kernel')));
+		$expected = array('users' => array(
+			'user' => array(
+				array( 'id' => 1, 'username' => 'bravo_kernel'))));
 
-		$output = $this->RestKitComponent->formatFindResultForSimpleXML($findByIdResult);
+		$output = $this->RestKitComponent->formatCakeFindResultForSimpleXML($findByIdResult);
 		$this->assertSame($expected, $output);
 		}
 

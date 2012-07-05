@@ -121,12 +121,12 @@ Find() results with associated Models will produce the following XML:
         <user>
           <id>1</id>
           <username>BravoKernel</username>
-            <posts>
-              <post>
-                <id>1</id>
-                <body>This is a post</body>
-              </post>
-            </posts>
+          <posts>
+            <post>
+              <id>1</id>
+              <body>This is a post</body>
+            </post>
+          </posts>
         </user>
       </users>
     </response>

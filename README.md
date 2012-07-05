@@ -1,6 +1,8 @@
 # CakePHP RestKit plugin
 
-Need a full-featured REST API? Just load this plugin and you should be ready to go!
+Need a full-featured REST API?
+
+Load this plugin and you are ready to go!
 
 ## Version ##
 

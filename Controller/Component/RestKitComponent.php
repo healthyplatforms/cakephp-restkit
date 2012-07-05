@@ -106,13 +106,17 @@ class RestKitComponent extends Component {
 		$serializeKeynames = array();
 		foreach ($arrays as $key => $array) {
 
-			$simpleXml = $this->reformatCakeFindResultForSimpleXML($array);
+			$simpleXml = $this->formatCakeFindResultForSimpleXML($array);
+			$defaultRootNode = key($simpleXml);
 			
-			// Manipulate $simpleXml array if a rootnode is passed
-			//if (!is_string($key)){
-			//	TODO: somehow replace the root-key with passed string
-			//}
-
+			// Manipulate $simpleXml array if a rootnode-string is passed
+			if (is_string($key)){
+				$simpleXml[$key] = $simpleXml[$defaultRootNode];
+				unset ($simpleXml[$defaultRootNode]);
+			}else{
+				$key = $defaultRootNode;
+			}
+			
 			// make data available and remember the key for mass _serialize()
 			$this->controller->set($simpleXml);
 			$key = key($simpleXml);
@@ -123,13 +127,13 @@ class RestKitComponent extends Component {
 	}
 
 /**
- * reformatCakeFindResultForSimpleXML() reformats default CakePHP arrays produced
+ * formatCakeFindResultForSimpleXML() reformats default CakePHP arrays produced
  * by find() queries into a format that is suitable for passing to SimpleXML
  *
  * @param mixed CakePHP find() result
  * @return mixed array ready for passing to SimpleXml
  */
-	public function reformatCakeFindResultForSimpleXML($cakeFindResult){
+	public function formatCakeFindResultForSimpleXML($cakeFindResult){
 
 		// process results produced by findById() and find('first') 
 		if (Hash::check($cakeFindResult, '{s}')){

@@ -135,41 +135,26 @@ class RestKitComponent extends Component {
  */
 	public function formatCakeFindResultForSimpleXML($cakeFindResult){
 
-		// process results produced by findById() and find('first') 
+		// make findById() and find('first') format identical to find() format
 		if (Hash::check($cakeFindResult, '{s}')){
-
-			$simpleXmlArray = array();
-			$modelIndex = 0;
-			foreach (array_keys($cakeFindResult) as $modelKey){			// multiple root Models mean associations present (recursive > 1)
-
-				$modelUnderscored = Inflector::underscore($modelKey);
-				if ($modelIndex == 0){
-					$rootKey = $modelUnderscored;
-					$rootKeyPluralized = Inflector::pluralize($rootKey);
-					$simpleXmlArray[$rootKeyPluralized][$rootKey] = Hash::extract($cakeFindResult, "{$modelKey}");
-				}else{
-					$modelPluralized = Inflector::pluralize($modelUnderscored);
-					$simpleXmlArray[$rootKeyPluralized][$rootKey][$modelPluralized][$modelUnderscored] = Hash::extract($cakeFindResult, "{$modelKey}");
-				}
-				$modelIndex++;
-			}
-			return $simpleXmlArray;
+			$temp = $cakeFindResult;
+			unset($cakeFindResult);
+			$cakeFindResult[] = $temp;
 		}
-		
-		// process results produced by other find() variations 
-		$recordIndex = 0;								// keep track of the current record so we can point to the correct array item
-		$simpleXmlArray = array();						// array to fill with per-record SimpleXml arrays
+
+		$recordIndex = 0;
+		$simpleXmlArray = array();
 		foreach ($cakeFindResult as $foundRecord){
 
 			$modelIndex = 0;
-			foreach (array_keys($cakeFindResult[0]) as $modelKey){			// multiple root Models mean associations present (recursive > 1)
-				$modelUnderscored = Inflector::underscore($modelKey);		//e.g. ExamprepCustom to examprep_custom
+			foreach (array_keys($cakeFindResult[0]) as $modelKey){		// multiple root Models mean associations present (recursive > 1)
+				$modelUnderscored = Inflector::underscore($modelKey);	//e.g. ExamprepCustom to examprep_custom
 				$extracted = array($modelUnderscored =>  Hash::extract($foundRecord, "{$modelKey}"));
 
 				// first Model needs to be processed differently
 				if ($modelIndex == 0){
 					$rootKey = $modelUnderscored;
-					$rootKeyPluralized = Inflector::pluralize($rootKey);										// store to return as the root-node later (e.g. users)
+					$rootKeyPluralized = Inflector::pluralize($rootKey);	// store to return as the root-node later (e.g. users)
 					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}");	// extract only array-keys to prevent double <tags>
 				}else{
 					$pluralized = Inflector::pluralize($modelUnderscored);

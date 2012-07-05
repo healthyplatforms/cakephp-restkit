@@ -1,14 +1,14 @@
 # CakePHP RestKit plugin
 
-Need a full-featured REST API? Just load this plugin and start delivering XML/Json instantly ;)
+Need a full-featured REST API? Just load this plugin and you should be ready to go!
 
 ## Version ##
 
-This plugin is heavily under construction so do not use it unless you know what you are doing.
+This plugin is heavily under construction so do not use it unless you value your production environment ;)
 
 Current limitations:
 
-* automagic SimpleXML transformations limited to non-recursive CakePHP find() results
+* automagic SimpleXML generation broken for CakePHP find('first') and findById() results
 
 
 ## Features

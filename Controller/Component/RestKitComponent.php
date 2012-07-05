@@ -106,29 +106,30 @@ class RestKitComponent extends Component {
 		$serializeKeynames = array();
 		foreach ($arrays as $key => $array) {
 
-			// reformat Cake find() results for SimpleXML
-			$simpleXml = $this->formatFindResultForSimpleXML($array);	
+			$simpleXml = $this->reformatCakeFindResultForSimpleXML($array);
+			
+			// Manipulate $simpleXml array if a rootnode is passed
+			//if (!is_string($key)){
+			//	TODO: somehow replace the root-key with passed string
+			//}
 
-			// if $key is a string we use it as the <rootnode>, otherwise we use the returned pluralized modelname
-			if (!is_string($key)){
-				$key = $simpleXml['root'];
-			}
-			$this->controller->set(array($key => $simpleXml['content']));	// make data available for the view
-			array_push($serializeKeynames, $key);							// remember the keyname for mass _serialize() later
+			// make data available and remember the key for mass _serialize()
+			$this->controller->set($simpleXml);
+			$key = key($simpleXml);
+			array_push($serializeKeynames, $key);
 		}
 		// we MUST _serialize all arrays at once
 		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
 /**
- * formatFindResultForSimpleXML() reformats default CakePHP arrays produced
+ * reformatCakeFindResultForSimpleXML() reformats default CakePHP arrays produced
  * by find() queries into a format that is suitable for passing to SimpleXML
  *
  * @param mixed CakePHP find() result
- * @return mixed array with 'root' key containing  string for rootnode (e.g. users)
- * @return mixed array with 'content' key containing the array suitable for passing to SimpleXml
+ * @return mixed array ready for passing to SimpleXml
  */
-	public function formatFindResultForSimpleXML($cakeFindResult){
+	public function reformatCakeFindResultForSimpleXML($cakeFindResult){
 
 		// process results produced by findById() and find('first') 
 		if (Hash::check($cakeFindResult, '{s}')){
@@ -141,16 +142,14 @@ class RestKitComponent extends Component {
 				if ($modelIndex == 0){
 					$rootKey = $modelUnderscored;
 					$rootKeyPluralized = Inflector::pluralize($rootKey);
-					$simpleXmlArray[$rootKey] = Hash::extract($cakeFindResult, "{$modelKey}");
+					$simpleXmlArray[$rootKeyPluralized][$rootKey] = Hash::extract($cakeFindResult, "{$modelKey}");
 				}else{
 					$modelPluralized = Inflector::pluralize($modelUnderscored);
-					$simpleXmlArray[$rootKey][$modelPluralized][$modelUnderscored] = Hash::extract($cakeFindResult, "{$modelKey}");
+					$simpleXmlArray[$rootKeyPluralized][$rootKey][$modelPluralized][$modelUnderscored] = Hash::extract($cakeFindResult, "{$modelKey}");
 				}
 				$modelIndex++;
 			}
-			return array(
-				'root' => $rootKeyPluralized,
-				'content' =>  $simpleXmlArray);
+			return $simpleXmlArray;
 		}
 		
 		// process results produced by other find() variations 
@@ -167,19 +166,16 @@ class RestKitComponent extends Component {
 				if ($modelIndex == 0){
 					$rootKey = $modelUnderscored;
 					$rootKeyPluralized = Inflector::pluralize($rootKey);										// store to return as the root-node later (e.g. users)
-					$simpleXmlArray[$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}");	// extract only array-keys to prevent double <tags>
+					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}");	// extract only array-keys to prevent double <tags>
 				}else{
 					$pluralized = Inflector::pluralize($modelUnderscored);
-					$simpleXmlArray[$rootKey][$recordIndex][$pluralized]= $extracted;						
+					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex][$pluralized]= $extracted;						
 				}
 				$modelIndex++;
 			}
 			$recordIndex++;
 		}
-		return (array(
-			'root' => $rootKeyPluralized,
-			'content' => $simpleXmlArray
-		));
+		return $simpleXmlArray;
 	}
 
 /**

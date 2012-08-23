@@ -169,11 +169,10 @@ RestKit supports out-of-the box validation for the following URI options
 
 # TODO
 
-* add errorcode system to make them selectable in your IDE and to prevent having to pass them as a parameter
-* add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * add security (deny all unless authorized)
 * add OAuth token handling (will require a separate app with OAuth server and login functionality)
-* extend validations for known URI-options
-* enable/disable URI-options from the config
-* update/extend unit tests
+* add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * make prefixed route exclusive when enabled (making the default (direct) Cake routes to the controllers no longer available)
+* extend validations for known URI-options (or completely rethink this feature)
+* enable/disable URI-options from the config
+* possibly very silly idea: add errorcode system for easy usage in IDE

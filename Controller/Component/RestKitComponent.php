@@ -77,10 +77,12 @@ class RestKitComponent extends Component {
 		$this->addDetectors();
 		//pr($this->request);
 
-		if ($this->request->is('api')) {
-			echo "SUCCESS: SUPPORTED API METHOD";
-		} else {
+		// will return a 404 in production mode if the call is not JSON or XML
+		if (!$this->request->is('api')) {
 			echo "ERROR: UNSUPPORTED API METHOD";
+			return;
+		} else {
+			echo "SUCCESS: SUPPORTED API METHOD";
 		}
 
 		// return 404 errors for all non JSON/XML requests (when enabled in config.php)
@@ -397,15 +399,28 @@ class RestKitComponent extends Component {
 	/**
 	 * isApi() determines if the request is an API request.
 	 *
-	 * Note: atm only xml and json are regarded as API calls
+	 * - currently only support for XML and JSON is implemented
+	 * - only extenions present in the the configuration array 'enabledExtensions'
+	 * will lead to isApi() returning TRUE. In other words, if 'json' is not defined
+	 * in the configuration file even a valid JSON call will lead to isApi() returning FALSE.
 	 *
 	 * @param CakeRequest $request
 	 * @return boolean
 	 */
 	public static function isApi(CakeRequest $request) {
-		if ($request->is('json') || $request->is('xml')) {
-			return true;
+		if (in_array('json', Configure::read('RestKit.Request.enabledExtensions'))) {
+			if ($request->is('json')){
+				return true;
+			}
 		}
+
+		if (in_array('xml', Configure::read('RestKit.Request.enabledExtensions'))) {
+			if ($request->is('xml')){
+				return true;
+			}
+		}
+		// neither XML or JSON
+		return false;
 	}
 
 	/**

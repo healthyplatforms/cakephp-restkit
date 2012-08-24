@@ -151,7 +151,7 @@ Usage is similar to AuthComponent so you can use a string, an array or var args:
 * `$this->RestKit->allowPublic();` to make all actions public
 
 
-## Custom Exceptions
+## Exception handling
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:
 
@@ -186,9 +186,7 @@ RestKit supports out-of-the box validation for the following URI options
 * **sort** either asc or desc
 
 # TODO
-
-* add security (deny all unless authorized)
-* add OAuth token handling (will require a separate app with OAuth server and login functionality)
+* add support for external authentication mechanism (will require a separate app with login functionality and e.g. OAuth service provider)
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * make prefixed route exclusive when enabled (making the default (direct) Cake routes to the controllers no longer available)
 * extend validations for known URI-options (or completely rethink this feature)

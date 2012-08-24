@@ -77,16 +77,10 @@ class RestKitComponent extends Component {
 		$this->addDetectors();
 		//pr($this->request);
 
-		// will return a 404 in production mode if the call is not JSON or XML
+		// return a 404 error in production mode for all non-enabled extensions
 		if (!$this->request->is('api')) {
-			echo "ERROR: UNSUPPORTED API METHOD";
 			return;
-		} else {
-			echo "SUCCESS: SUPPORTED API METHOD";
 		}
-
-		// return 404 errors for all non JSON/XML requests (when enabled in config.php)
-		//$this->checkRequestMethod($controller);
 	}
 
 	/**
@@ -280,32 +274,6 @@ class RestKitComponent extends Component {
 	}
 
 	/**
-	 * _checkExtension() is used to:
-	 * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)
-	 * - allow only specific pages to be requested as HTML (e.g. for OAuth or logging in)
-	 *
-	 * @TODO decide whether to add support for specified exceptions in controller::action pairs
-	 *
-	 * @param void
-	 */
-	public function checkRequestMethod(Controller $controller) {
-
-		// skip if .xml or .json extension is used
-		if (in_array($controller->params['ext'], array('xml', 'json'))) {
-			return;
-		}
-
-		// skip if the accept-header is JSON or XML
-		$acceptHeaders = $controller->request->parseAccept();
-		if (in_array($acceptHeaders['1.0'][0], array('application/xml', 'application/json'))) {
-			return;
-		}
-
-		// This request is neither JSON nor XML so return a 404 for all calls
-		// that are not in the exceptions array (these will be accessible as html)
-	}
-
-	/**
 	 * validateUriOptions() merges passed URI options with default options, validates them against the model and resets unvalidated options to the default value.
 	 */
 	private function _validateUriOptions($default_options = array()) {
@@ -437,6 +405,12 @@ class RestKitComponent extends Component {
 			return true;
 		}
 		// then sniff the accept-header (will return false if not present)
+		//$acceptHeaders = $controller->request->parseAccept();
+		//if (in_array($acceptHeaders['1.0'][0], array('application/xml', 'application/json'))) {
+		//	return;
+		//}
+		//
+		//OR TRY THIS
 		//return ($request->accepts('application/json'));
 		//}
 	}

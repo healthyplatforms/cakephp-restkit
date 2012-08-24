@@ -6,6 +6,8 @@ App::uses('RestOption', 'Model');
 /**
  * Description of RestKitComponent
  *
+ * @todo fix Accept Headers not handled in isJson() and isXMl()
+ *
  * @todo (might have to) build in a check in validateUriOptions for this->controller->$modelName->validates() because it will break if the model has $uses = false or array()
  *
  * @author bravo-kernel
@@ -13,21 +15,129 @@ App::uses('RestOption', 'Model');
 class RestKitComponent extends Component {
 
 	/**
-	 * $errorBuffer will hold all error-messages to be included in the response
+	 * $controller holds a reference to the current controller
+	 *
+	 * @var Controller
+	 */
+	protected $controller;
+
+	/**
+	 * $request holds a reference to the current request
+	 *
+	 * @var CakeRequest
+	 */
+	protected $request;
+
+	/**
+	 * $response holds a reference to the current response
+	 *
+	 * @var CakeResponse
+	 */
+	protected $response;
+
+	/**
+	 * $publicActions holds a list of actions (for the calling controller)
+	 * that can be accessed without authentication
+	 *
+	 * @var array
+	 */
+	protected $publicActions = array();
+
+	/**
+	 * $_errors holds all error-messages to be included in the response
 	 */
 	protected $_errors = array();
 
 	/**
-	 * startup() is used to make the calling Controller available as $this->controller
-	 * and to return 404 errors for all non JSON/XML requests (when enabled in config.php)
+	 * initialize() is used to create references to the the calling Controller,
+	 * initialize callback and set up the Component.
 	 *
-	 * NOTE: startup() is called before the controller's beforeFilter()
+	 * @todo check if this is correct ==> initialize() is called before the calling Controller's beforeFilter()
 	 *
 	 * @param Controller $controller
+	 * @return void
+	 */
+	public function initialize(Controller $controller) {
+		$this->setup($controller);
+	}
+
+	/**
+	 * setup() is used to configure the RestKit component
+	 *
+	 * @param Controller $controller
+	 * @return void
+	 */
+	protected function setup(Controller $controller) {
+		// Cache local properties from the controller
+		$this->controller = $controller;
+		$this->request = $controller->request;
+		$this->response = $controller->response;
+
+		// Configure detectors
+		$this->addDetectors();
+		//pr($this->request);
+
+		if ($this->request->is('api')) {
+			echo "SUCCESS: SUPPORTED API METHOD";
+		} else {
+			echo "ERROR: UNSUPPORTED API METHOD";
+		}
+
+		// return 404 errors for all non JSON/XML requests (when enabled in config.php)
+		//$this->checkRequestMethod($controller);
+	}
+
+	/**
+	 * startup() is used to enforce API access/authentication
+	 *
+	 * @todo check if this is correct ==> startup() is called after the calling Controller's beforeFilter()
+	 *
+	 * @param Controller $controller
+	 * @return void
 	 */
 	public function startup(Controller $controller) {
-		$this->controller = $controller;
-		$this->checkRequestMethod($controller);
+		$this->configureApiAccess();  // Enforce API authentication
+	}
+
+	/**
+	 * hasError() checks if the current controller is an Error controller
+	 *
+	 * @return boolean
+	 */
+	public function hasError() {
+		return get_class($this->controller) == 'CakeErrorController';
+	}
+
+	/**
+	 * configureApiAccess() is used to.....
+	 */
+	protected function configureApiAccess() {
+		// placeholder for allow/deny and token logic
+	}
+
+	/**
+	 * allowPublic() is used to allow public access to an action
+	 *
+	 * @param string $action
+	 * @return void
+	 */
+	public function allowPublic($action) {
+		$this->publicActions[] = $action;
+	}
+
+	/**
+	 * denyPublic() is used to deny public access to an action (requires authentication)
+	 *
+	 * @param string $action
+	 * @return boolean
+	 */
+	public function denyPublic($action) {
+		$pos = array_search($action, $this->publicActions);
+		if (false === $pos) {
+			return false;
+		}
+		unset($this->publicActions[$pos]);
+		return true;
 	}
 
 	/**
@@ -191,10 +301,6 @@ class RestKitComponent extends Component {
 
 		// This request is neither JSON nor XML so return a 404 for all calls
 		// that are not in the exceptions array (these will be accessible as html)
-		// TODO: make these controller/action pairs
-		//if (!in_array($controller->params['controller'], array('OAuth'))) {
-		//	throw new NotFoundException();
-		//}
 	}
 
 	/**
@@ -270,6 +376,71 @@ class RestKitComponent extends Component {
 	private static function _enableExtensions() {
 		Router::parseExtensions();
 		Router::setExtensions(Configure::read('RestKit.Request.enabledExtensions'));
+	}
+
+	/**
+	 * addDetectors() is used to configure extra detectors for API requests
+	 *
+	 * Adds the following detectors for CakeRequest:
+	 * ->is('api')
+	 * ->is('json')
+	 * ->is('xml')
+	 *
+	 * @return void
+	 */
+	public function addDetectors() {
+		$this->request->addDetector('api', array('callback' => 'RestKitComponent::isApi'));
+		$this->request->addDetector('json', array('callback' => 'RestKitComponent::isJson'));
+		$this->request->addDetector('xml', array('callback' => 'RestKitComponent::isXml'));
+	}
+
+	/**
+	 * isApi() determines if the request is an API request.
+	 *
+	 * Note: atm only xml and json are regarded as API calls
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isApi(CakeRequest $request) {
+		if ($request->is('json') || $request->is('xml')) {
+			return true;
+		}
+	}
+
+	/**
+	 * isJson() determines if a Json request was made
+	 *
+	 * @todo passed accept-headers are not picked up at all by Cake atm
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isJson(CakeRequest $request) {
+		// first check the extension used
+		if (isset($request->params['ext']) && $request->params['ext'] === 'json') {
+			return true;
+		}
+		// then sniff the accept-header (will return false if not present)
+		//return ($request->accepts('application/json'));
+		//}
+	}
+
+	/**
+	 * isXml() determines if an XML request was made
+	 *
+	 * @todo passed accept-headers are not picked up at all by Cake atm
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isXml(CakeRequest $request) {
+		// first check the extension used
+		if (isset($request->params['ext']) && $request->params['ext'] === 'xml') {
+			return true;
+		}
+		// then sniff the accept-header (will return false if not present)
+		//return $request->accepts('application/xml');
 	}
 
 }

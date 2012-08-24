@@ -76,7 +76,6 @@ class RestKitComponent extends Component {
 		// Configure detectors
 		$this->addDetectors();
 		//pr($this->request);
-
 		// return a 404 error in production mode for all non-enabled extensions
 		if (!$this->request->is('api')) {
 			return;
@@ -108,17 +107,48 @@ class RestKitComponent extends Component {
 	 * configureApiAccess() is used to.....
 	 */
 	protected function configureApiAccess() {
-		// placeholder for allow/deny and token logic
+		if ($this->hasError) {
+			return;
+		}
+
+		// always return a 404 if the call is not an enabled method
+		if (!$this->request->isApi()) {
+			throw new NotFoundException('Unsupported API request format'); // TODO: check if this works
+		}
+
+		// Skip security checks for public actions
+		if (in_array($this->controller->action, $this->publicActions)) {
+			pr("Action defined as PUBLIC");
+		} else {
+			pr("Action defined as PRIVATE");
+		}
 	}
 
 	/**
-	 * allowPublic() is used to allow public access to an action
+	 * allowPublic() is used to allow public access to an API action
 	 *
-	 * @param string $action
+	 * You can use allowPublic() just like AuthComponent allow() so with either an array, or var args.
+	 *
+	 * `$this->RestKit->allowPublic(array('edit', 'add'));` or
+	 * `$this->RestKit->allowPublic('edit', 'add');` or
+	 * `$this->RestKit->allowPublic();` to allow all actions
+	 *
+	 * @param string|array $action,... Controller action name or array of actions
 	 * @return void
+	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
 	 */
-	public function allowPublic($action) {
-		$this->publicActions[] = $action;
+	public function allowPublic($action = null) {
+		//$this->publicActions[] = $action;
+
+		$args = func_get_args();
+		if (empty($args) || $action === null) {
+			$this->publicActions = $this->controller->methods;
+		} else {
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
+			}
+			$this->publicActions = array_merge($this->publicActions, $args);
+		}
 	}
 
 	/**
@@ -377,13 +407,13 @@ class RestKitComponent extends Component {
 	 */
 	public static function isApi(CakeRequest $request) {
 		if (in_array('json', Configure::read('RestKit.Request.enabledExtensions'))) {
-			if ($request->is('json')){
+			if ($request->is('json')) {
 				return true;
 			}
 		}
 
 		if (in_array('xml', Configure::read('RestKit.Request.enabledExtensions'))) {
-			if ($request->is('xml')){
+			if ($request->is('xml')) {
 				return true;
 			}
 		}

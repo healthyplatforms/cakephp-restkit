@@ -143,7 +143,7 @@ public in your controller.
 #### allowPublic()
 Use allowPublic() to make your action(s) public/unprotected.
 
-The usage is similar to AuthComponent so you can use a string, an or var args:
+Usage is similar to AuthComponent so you can use a string, an array or var args:
 
 * `$this->RestKit->allowPublic(array('index', 'add'));` or
 * `$this->RestKit->allowPublic('index');` or

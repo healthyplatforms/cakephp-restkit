@@ -138,8 +138,6 @@ class RestKitComponent extends Component {
 	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
 	 */
 	public function allowPublic($action = null) {
-		//$this->publicActions[] = $action;
-
 		$args = func_get_args();
 		if (empty($args) || $action === null) {
 			$this->publicActions = $this->controller->methods;

@@ -42,8 +42,6 @@ Disable CakePHP default routing in /app/Config/routes.php:
     //require CAKE . 'Config' . DS . 'routes.php';
 
 
-# Documentation
-
 ## Configuration
 
 All options can be configurated by editing /app/Plugin/RestKit/Config/config.php.
@@ -52,9 +50,9 @@ All options can be configurated by editing /app/Plugin/RestKit/Config/config.php
 * **enableOptionValidation**: set to 'true' to turn validation on
 * HTTP Status Codes
 
-## Usage
+# Usage
 
-### Response rendering
+## Response rendering
 
 Never worry about reformatting your arrays for SimpleXML again. RestKit will automagically
 handle all array reformatting for you to produce correctly encapsulated XML responses.
@@ -136,13 +134,13 @@ Find() results with associated Models will produce the following XML:
       </users>
     </response>
 
-### Securing your API
+## Securing your API
 
-#### Access Control
+### Access Control
 RestKit will deny access to all your actions unless you specifically make them
 public in your controller.
 
-##### allowPublic()
+#### allowPublic()
 Use allowPublic() to make your action(s) public/unprotected.
 
 Usage is similar to AuthComponent so you can use a string, an array or var args:
@@ -153,7 +151,7 @@ Usage is similar to AuthComponent so you can use a string, an array or var args:
 * `$this->RestKit->allowPublic();` to make all actions public
 
 
-### Custom Exceptions
+## Custom Exceptions
 Use the RestKitException to return errors with custom HTTP Status Codes and rich
 error information:
 
@@ -170,7 +168,7 @@ To return the following XML along with a Response Header using Status Code 666 a
 
 **Note:** custom Status Codes and messages must be defined in /RestKit/Config/config.php
 
-### Validating URI parameters
+## Validating URI parameters
 
 Validate URI options by simply defining your default options (all others passed
 options will be ignored):

@@ -145,9 +145,9 @@ Use allowPublic() to make your action(s) public/unprotected.
 
 Usage is similar to AuthComponent so you can use a string, an array or var args:
 
-* `$this->RestKit->allowPublic(array('index', 'add'));` or
-* `$this->RestKit->allowPublic('index');` or
-* `$this->RestKit->allowPublic('index', 'add');` or
+* `$this->RestKit->allowPublic(array('index', 'add'));`
+* `$this->RestKit->allowPublic('index');`
+* `$this->RestKit->allowPublic('index', 'add');`
 * `$this->RestKit->allowPublic();` to make all actions public
 
 

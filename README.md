@@ -136,11 +136,13 @@ Find() results with associated Models will produce the following XML:
       </users>
     </response>
 
-### Access Control
+### Securing your API
+
+#### Access Control
 RestKit will deny access to all your actions unless you specifically make them
 public in your controller.
 
-#### allowPublic()
+##### allowPublic()
 Use allowPublic() to make your action(s) public/unprotected.
 
 Usage is similar to AuthComponent so you can use a string, an array or var args:

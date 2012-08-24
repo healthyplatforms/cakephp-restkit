@@ -8,16 +8,18 @@ Load this plugin and you are ready to go!
 
 This plugin is heavily under construction so do not use it unless you value your production environment ;)
 
-Current limitations:
-
-* automagic SimpleXML reformatting for CakePHP find() results limited to 'recursive' levels 0 and 1
-
 ## Features
 
+* access control (deny all unless defined as public)
 * custom HTTP Status Codes
 * custom XML/Json errors (with the RestKitExceptionHandler)
 * vaidation rules for URI parameters
 * version prefixing (e.g. /v1/)
+
+## Current limitations
+
+* authentication/authorization not implemented yet (use allowPublic() in your controller for now)
+* automagic SimpleXML reformatting for CakePHP find() results limited to 'recursive' levels 0 and 1
 
 ## Requirements
 
@@ -46,6 +48,7 @@ Disable CakePHP default routing in /app/Config/routes.php:
 
 All options can be configurated by editing /app/Plugin/RestKit/Config/config.php.
 
+* **enabledExtensions**: choose to service XML and/or JSON responses
 * **enableOptionValidation**: set to 'true' to turn validation on
 * HTTP Status Codes
 
@@ -132,6 +135,17 @@ Find() results with associated Models will produce the following XML:
         </user>
       </users>
     </response>
+
+### Access Control
+RestKit denies access to all your actions unless you specifically make them public.
+
+The method to make them public is identical to that of AuthComponent so you can
+use either an array, or var args:
+
+* `$this->RestKit->allowPublic(array('edit', 'add'));` or
+* `$this->RestKit->allowPublic('edit', 'add');` or
+* `$this->RestKit->allowPublic();` to allow all actions
+
 
 ### Custom Exceptions
 Use the RestKitException to return errors with custom HTTP Status Codes and rich

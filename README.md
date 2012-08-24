@@ -48,7 +48,7 @@ Disable CakePHP default routing in /app/Config/routes.php:
 
 All options can be configurated by editing /app/Plugin/RestKit/Config/config.php.
 
-* **enabledExtensions**: choose to service XML and/or JSON responses
+* **enabledExtensions**: choose which output you REST API will support (xml and/or json)
 * **enableOptionValidation**: set to 'true' to turn validation on
 * HTTP Status Codes
 

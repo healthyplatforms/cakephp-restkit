@@ -137,14 +137,18 @@ Find() results with associated Models will produce the following XML:
     </response>
 
 ### Access Control
-RestKit denies access to all your actions unless you specifically make them public.
+RestKit will deny access to all your actions unless you specifically make them
+public in your controller.
 
-The method to make them public is identical to that of AuthComponent so you can
-use either an array, or var args:
+#### allowPublic()
+Use allowPublic() to make your action(s) public/unprotected.
 
-* `$this->RestKit->allowPublic(array('edit', 'add'));` or
-* `$this->RestKit->allowPublic('edit', 'add');` or
-* `$this->RestKit->allowPublic();` to allow all actions
+The usage is similar to AuthComponent so you can use a string, an or var args:
+
+* `$this->RestKit->allowPublic(array('index', 'add'));` or
+* `$this->RestKit->allowPublic('index');` or
+* `$this->RestKit->allowPublic('index', 'add');` or
+* `$this->RestKit->allowPublic();` to make all actions public
 
 
 ### Custom Exceptions

@@ -80,6 +80,77 @@ class RestKitComponent extends Component {
 		if (!$this->request->is('api')) {
 			return;
 		}
+
+		// 1. check allowPublic()
+		// 2. fetch Authentication Method from the request
+		//$requestHeaders = getallheaders();
+		//$authorizationHeader = $requestHeaders['Authorization'];
+		//list($authMethod) = explode(' ', $authorizationHeader);
+		//pr("authMethod = $authMethod");
+		//pr ("BASIC zit in : " . env('PHP_AUTH_USER'));
+		//pr ("DIGEST zit in : " . env('PHP_AUTH_DIGEST'));
+
+		$request_headers = self::getHttpRequestHeaders();
+		pr($request_headers);
+
+
+		//$auth_method = $request_headers['Authorization'];
+		//pr("Requested AUTH method = $auth_method");
+	}
+
+	/**
+	 * getHttpHeaders() is a clone of the get_headers() helper function found in oauth-php
+	 * (http://code.google.com/p/oauth-php/) and is required to retrieve the "Authorization"
+	 * header on webservers not running Apache.
+	 *
+	 * Note: Apache will not show "Authorization" as one of the $_SERVER variables
+	 * so we MUST use apache_get_headers() to get it. Because other webservers will not
+	 * have that function we just hope the Authorization header will be present
+	 * in $_SERVER on those machine. Please let me know if you can confirm that this
+	 * will actually work on a non-Apache webserver.
+	 */
+	public function getHttpRequestHeaders() {
+		if (function_exists('apache_request_headers')) {	// Apache webserver
+			return apache_request_headers();
+		}
+		return self::getServerHttpRequestHeaders();			// non-Apache webserver so parse $_SERVER
+	}
+
+	/**
+	 * getServerHttpHeaders() is used to parse $_SERVER and return only the
+	 * HTTP headers found there in an array-format identical to that of PHP's
+	 * apache_request_headers().
+	 *
+	 * @return array
+	 */
+	private static function getServerHttpRequestHeaders() {
+		$result = array();
+		foreach ($_SERVER as $key => $value) {
+			if (substr($key, 0, 5) == "HTTP_") {
+				// this is chaos, basically it is just there to capitalize the first letter of every
+				// word that is not an initial HTTP and strip HTTP (code from przemek)
+				$key = str_replace(" ", "-", ucwords(strtolower(str_replace("_", " ", substr($key, 5)))));
+				$result[$key] = $value;
+			}
+		}
+		return $result;
+	}
+
+
+	private static function getAuthorizationHeader(array $http_request_headers){
+
+	}
+
+	/**
+	 * get_authorization_header() is used to return the HTTP "Authorization"
+	 * header.
+	 *
+	 * @param array $request_headers
+	 * @return string if header is found
+	 * @return false if header cannot be found
+	 */
+	private static function get_authorization_header(array $request_headers) {
+		//if()
 	}
 
 	/**
@@ -91,7 +162,7 @@ class RestKitComponent extends Component {
 	 * @return void
 	 */
 	public function startup(Controller $controller) {
-		$this->configureApiAccess();  // Enforce API authentication
+		self::configureApiAccess();  // Enforce API authentication
 	}
 
 	/**
@@ -105,22 +176,27 @@ class RestKitComponent extends Component {
 
 	/**
 	 * configureApiAccess() is used to.....
+	 *
+	 * @todo implement authentication mechanism using external mechanism (e.g. OAuth)
 	 */
 	protected function configureApiAccess() {
-		if ($this->hasError) {
-			return;
-		}
 
 		// always return a 404 if the call is not an enabled method
 		if (!$this->request->isApi()) {
 			throw new NotFoundException('Unsupported API request format'); // TODO: check if this works
 		}
 
-		// Skip security checks for public actions
-		if (in_array($this->controller->action, $this->publicActions)) {
-			pr("Action defined as PUBLIC");
-		} else {
-			pr("Action defined as PRIVATE");
+		// check for errors first (to render API error response) ?!?
+		if (self::hasError()) {
+			return;
+		}
+
+		// Execute security checks if the action is not public
+		if (!in_array($this->controller->action, $this->publicActions)) {
+			pr("Action defined as PRIVATE, execute security checks:");
+
+			// check token (or multiple methods)
+			// deny if not found
 		}
 	}
 
@@ -171,7 +247,7 @@ class RestKitComponent extends Component {
 	 * @return type array
 	 */
 	public function parseUriOptions($default_options) {
-		$options = $this->_validateUriOptions($default_options);
+		$options = self::_validateUriOptions($default_options);
 		return $options;
 	}
 
@@ -207,7 +283,7 @@ class RestKitComponent extends Component {
 	 * TODO calling without arguments now generates an empty JSON array. Maybe throw a 500 here so we can detect ?
 	 */
 	public function render($arrays = array()) {
-		$this->_setViewData($arrays);
+		self::_setViewData($arrays);
 	}
 
 	/**
@@ -232,7 +308,7 @@ class RestKitComponent extends Component {
 	protected function _setViewData($arrays) {
 
 		// add debug information to the JSON response
-		$errors = $this->getErrors();
+		$errors = self::getErrors();
 		if (!empty($errors)) {
 			$arrays['errors'] = $errors;
 		}
@@ -240,7 +316,7 @@ class RestKitComponent extends Component {
 		$serializeKeynames = array();
 		foreach ($arrays as $key => $array) {
 
-			$simpleXml = $this->formatCakeFindResultForSimpleXML($array);
+			$simpleXml = self::formatCakeFindResultForSimpleXML($array);
 			$defaultRootNode = key($simpleXml);
 
 			// Manipulate $simpleXml array if a rootnode-string is passed
@@ -329,7 +405,7 @@ class RestKitComponent extends Component {
 		foreach ($this->Model->validationErrors as $key => $value) {
 			$modelMerged[$key] = $modelDefaults[$key];       // reset invalidated key
 			$key = preg_replace('/.+_/', '', $key);
-			$this->setError('optionValidation', $key, $value[0]);
+			self::setError('optionValidation', $key, $value[0]);
 		}
 		return $modelMerged;
 	}

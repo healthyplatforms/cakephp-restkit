@@ -49,16 +49,29 @@ class RestKitComponent extends Component {
 	protected $_errors = array();
 
 	/**
-	 * initialize() is used to create references to the the calling Controller,
-	 * initialize callback and set up the Component.
+	 * initialize() is used to setup references to the the calling Controller, add
+	 * Cake Detectors and to enforce REST-only
 	 *
-	 * @todo check if this is correct ==> initialize() is called before the calling Controller's beforeFilter()
+	 * Note: initialize() is run before the calling Controller's beforeFilter()
 	 *
 	 * @param Controller $controller
 	 * @return void
 	 */
 	public function initialize(Controller $controller) {
-		$this->setup($controller);
+		self::setup($controller);	// create references and add Cake Detectors
+		//self::validateRequest();	// only allow supported/enabled extensions
+	}
+
+	/**
+	 * startup() is used to handle Authentication, Autorization, etc.
+	 *
+	 * Note: startup() is called after the calling Controller's beforeFilter()
+	 *
+	 * @param Controller $controller
+	 * @return void
+	 */
+	public function startup(Controller $controller) {
+		self::isAuthorized();
 	}
 
 	/**
@@ -76,25 +89,103 @@ class RestKitComponent extends Component {
 		// Configure detectors
 		$this->addDetectors();
 		//pr($this->request);
+	}
+
+	/**
+	 * validateRequest() is used to return a 404 error for all requests NOT
+	 * using one of the supported AND config-enabled extensions.
+	 *
+	 * @todo hook this function into overall logic (now ignored)
+	 * @return boolean true if valid
+	 */
+	protected function validateRequest(){
 		// return a 404 error in production mode for all non-enabled extensions
 		if (!$this->request->is('api')) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 * @return type
+	 */
+	public function isAuthorized(){
+
+		// Skip authentication/authorization if this is a public resource
+		if (in_array($this->controller->action, $this->publicActions)) {
 			return;
 		}
 
-		// 1. check allowPublic()
-		// 2. fetch Authentication Method from the request
-		//list($authMethod) = explode(' ', $authorizationHeader);
-		//pr("authMethod = $authMethod");
-		//pr ("BASIC zit in : " . env('PHP_AUTH_USER'));
-		//pr ("DIGEST zit in : " . env('PHP_AUTH_DIGEST'));
-		//$http_request_headers = self::getHttpRequestHeaders();
-		//pr($http_request_headers);
+		// =============================================================
+		// Authentication flow:
+		// 1. user authenticated?
+		//	Yes: start authorization flow
+		//	No: continue authentication flow
+		//
+		// 2. Authentication request (attempt) passed?
+		//	No: respond with 401 incl. supported/enabled authentication methods
+		//	Yes: hand data over to external non-restkit auth-mechanism
+		//	(e.g. Cake for Basic and Digest, OAuth provide-app for oauth)
+		//
+		// 3. process external response
+		//	TRUE: present data
+		//	FALSE: deny
+		// =============================================================
+
+
+
+		// get the authentication method was used
 		$authorizationRequestHeader = self::getHttpRequestHeader('authorization');
 		pr("Authorization header = $authorizationRequestHeader");
 
 		//$auth_method = $request_headers['Authorization'];
 		//pr("Requested AUTH method = $auth_method");
 	}
+
+	/**
+	 * allowPublic() is used to allow public access to an API action
+	 *
+	 * You can use allowPublic() just like AuthComponent allow() so with either an array, or var args.
+	 *
+	 * `$this->RestKit->allowPublic(array('edit', 'add'));` or
+	 * `$this->RestKit->allowPublic('edit', 'add');` or
+	 * `$this->RestKit->allowPublic();` to allow all actions
+	 *
+	 * @param string|array $action,... Controller action name or array of actions
+	 * @return void
+	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
+	 */
+	public function allowPublic($action = null) {
+		$args = func_get_args();
+		if (empty($args) || $action === null) {
+			$this->publicActions = $this->controller->methods;
+		} else {
+			if (isset($args[0]) && is_array($args[0])) {
+				$args = $args[0];
+			}
+			$this->publicActions = array_merge($this->publicActions, $args);
+		}
+	}
+
+	/**
+	 * denyPublic() is used to deny public access to an action (requires authentication)
+	 *
+	 * @param string $action
+	 * @return boolean
+	 */
+	public function denyPublic($action) {
+		$pos = array_search($action, $this->publicActions);
+		if (false === $pos) {
+			return false;
+		}
+		unset($this->publicActions[$pos]);
+		return true;
+	}
+
+
+
+
 
 	/**
 	 * getHttpRequestHeader() is a helper function used to retrieve the value
@@ -152,17 +243,6 @@ class RestKitComponent extends Component {
 		return $result;
 	}
 
-	/**
-	 * startup() is used to enforce API access/authentication
-	 *
-	 * @todo check if this is correct ==> startup() is called after the calling Controller's beforeFilter()
-	 *
-	 * @param Controller $controller
-	 * @return void
-	 */
-	public function startup(Controller $controller) {
-		self::configureApiAccess();  // Enforce API authentication
-	}
 
 	/**
 	 * hasError() checks if the current controller is an Error controller
@@ -178,7 +258,7 @@ class RestKitComponent extends Component {
 	 *
 	 * @todo implement authentication mechanism using external mechanism (e.g. OAuth)
 	 */
-	protected function configureApiAccess() {
+	protected function configureApiAccessDIS() {
 
 		// always return a 404 if the call is not an enabled method
 		if (!$this->request->isApi()) {
@@ -197,46 +277,6 @@ class RestKitComponent extends Component {
 			// check token (or multiple methods)
 			// deny if not found
 		}
-	}
-
-	/**
-	 * allowPublic() is used to allow public access to an API action
-	 *
-	 * You can use allowPublic() just like AuthComponent allow() so with either an array, or var args.
-	 *
-	 * `$this->RestKit->allowPublic(array('edit', 'add'));` or
-	 * `$this->RestKit->allowPublic('edit', 'add');` or
-	 * `$this->RestKit->allowPublic();` to allow all actions
-	 *
-	 * @param string|array $action,... Controller action name or array of actions
-	 * @return void
-	 * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#making-actions-public
-	 */
-	public function allowPublic($action = null) {
-		$args = func_get_args();
-		if (empty($args) || $action === null) {
-			$this->publicActions = $this->controller->methods;
-		} else {
-			if (isset($args[0]) && is_array($args[0])) {
-				$args = $args[0];
-			}
-			$this->publicActions = array_merge($this->publicActions, $args);
-		}
-	}
-
-	/**
-	 * denyPublic() is used to deny public access to an action (requires authentication)
-	 *
-	 * @param string $action
-	 * @return boolean
-	 */
-	public function denyPublic($action) {
-		$pos = array_search($action, $this->publicActions);
-		if (false === $pos) {
-			return false;
-		}
-		unset($this->publicActions[$pos]);
-		return true;
 	}
 
 	/**

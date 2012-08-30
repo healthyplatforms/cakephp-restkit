@@ -83,19 +83,35 @@ class RestKitComponent extends Component {
 
 		// 1. check allowPublic()
 		// 2. fetch Authentication Method from the request
-		//$requestHeaders = getallheaders();
-		//$authorizationHeader = $requestHeaders['Authorization'];
 		//list($authMethod) = explode(' ', $authorizationHeader);
 		//pr("authMethod = $authMethod");
 		//pr ("BASIC zit in : " . env('PHP_AUTH_USER'));
 		//pr ("DIGEST zit in : " . env('PHP_AUTH_DIGEST'));
 
-		$request_headers = self::getHttpRequestHeaders();
-		pr($request_headers);
-
+		//$http_request_headers = self::getHttpRequestHeaders();
+		//pr($http_request_headers);
+		$authorizationRequestHeader = self::getHttpRequestHeader('authorization');
+		pr("Authorization header = $authorizationRequestHeader");
 
 		//$auth_method = $request_headers['Authorization'];
 		//pr("Requested AUTH method = $auth_method");
+	}
+
+	/**
+	 * getHttpRequestHeader() is a helper function used to retrieve the value
+	 * of a single given HTTP request header.
+	 *
+	 * @param string $headerKey
+	 * @return string|boolean
+	 */
+	public function getHttpRequestHeader ($headerKey){
+		$http_request_headers = self::getHttpRequestHeaders();
+		foreach( $http_request_headers as $key => $value ) {
+			if( strtolower($key) == strtolower($headerKey)) {
+				return $http_request_headers[$key];
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -108,20 +124,21 @@ class RestKitComponent extends Component {
 	 * have that function we just hope the Authorization header will be present
 	 * in $_SERVER on those machine. Please let me know if you can confirm that this
 	 * will actually work on a non-Apache webserver.
+	 *
+	 * @return array in format identical to PHP's apache_request_headers()
 	 */
 	public function getHttpRequestHeaders() {
 		if (function_exists('apache_request_headers')) {	// Apache webserver
 			return apache_request_headers();
 		}
-		return self::getServerHttpRequestHeaders();			// non-Apache webserver so parse $_SERVER
+		return self::getServerHttpRequestHeaders();		// non-Apache webserver so parse $_SERVER
 	}
 
 	/**
 	 * getServerHttpHeaders() is used to parse $_SERVER and return only the
-	 * HTTP headers found there in an array-format identical to that of PHP's
-	 * apache_request_headers().
+	 * HTTP headers found there.
 	 *
-	 * @return array
+	 * @return array in format identical to PHP's apache_request_headers()
 	 */
 	private static function getServerHttpRequestHeaders() {
 		$result = array();
@@ -134,23 +151,6 @@ class RestKitComponent extends Component {
 			}
 		}
 		return $result;
-	}
-
-
-	private static function getAuthorizationHeader(array $http_request_headers){
-
-	}
-
-	/**
-	 * get_authorization_header() is used to return the HTTP "Authorization"
-	 * header.
-	 *
-	 * @param array $request_headers
-	 * @return string if header is found
-	 * @return false if header cannot be found
-	 */
-	private static function get_authorization_header(array $request_headers) {
-		//if()
 	}
 
 	/**

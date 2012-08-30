@@ -114,6 +114,7 @@ class RestKitComponent extends Component {
 
 		// Skip authentication/authorization if this is a public resource
 		if (in_array($this->controller->action, $this->publicActions)) {
+			pr("Public action, skip authentication/authorization");
 			return;
 		}
 
@@ -133,14 +134,32 @@ class RestKitComponent extends Component {
 		//	FALSE: deny
 		// =============================================================
 
+		// Skip authentication if user is already authenticated. Otherwise
+		// continue straight with the authorization flow.
+		if (self::isAuthenticated()){
+			pr("User is already authenticated");
+		}
+		pr("NOT AUTHENTICATED: produce correct WWW-Authenticate response");
 
 
 		// get the authentication method was used
 		$authorizationRequestHeader = self::getHttpRequestHeader('authorization');
 		pr("Authorization header = $authorizationRequestHeader");
 
+
 		//$auth_method = $request_headers['Authorization'];
 		//pr("Requested AUTH method = $auth_method");
+	}
+
+	/**
+	 * isAuthenticated() is used to determine if the requestor is already authenticated.
+	 *
+	 * @todo: replace this placeholder with actual code
+	 *
+	 * @return boolean
+	 */
+	private static function isAuthenticated(){
+		return false;
 	}
 
 	/**

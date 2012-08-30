@@ -87,7 +87,6 @@ class RestKitComponent extends Component {
 		//pr("authMethod = $authMethod");
 		//pr ("BASIC zit in : " . env('PHP_AUTH_USER'));
 		//pr ("DIGEST zit in : " . env('PHP_AUTH_DIGEST'));
-
 		//$http_request_headers = self::getHttpRequestHeaders();
 		//pr($http_request_headers);
 		$authorizationRequestHeader = self::getHttpRequestHeader('authorization');
@@ -104,10 +103,10 @@ class RestKitComponent extends Component {
 	 * @param string $headerKey
 	 * @return string|boolean
 	 */
-	public function getHttpRequestHeader ($headerKey){
+	public function getHttpRequestHeader($headerKey) {
 		$http_request_headers = self::getHttpRequestHeaders();
-		foreach( $http_request_headers as $key => $value ) {
-			if( strtolower($key) == strtolower($headerKey)) {
+		foreach ($http_request_headers as $key => $value) {
+			if (strtolower($key) == strtolower($headerKey)) {
 				return $http_request_headers[$key];
 			}
 		}
@@ -115,7 +114,7 @@ class RestKitComponent extends Component {
 	}
 
 	/**
-	 * getHttpHeaders() is a clone of the get_headers() helper function found in oauth-php
+	 * getHttpHeaders() is based on the get_headers() helper function found in oauth-php
 	 * (http://code.google.com/p/oauth-php/) and is required to retrieve the "Authorization"
 	 * header on webservers not running Apache.
 	 *
@@ -128,10 +127,10 @@ class RestKitComponent extends Component {
 	 * @return array in format identical to PHP's apache_request_headers()
 	 */
 	public function getHttpRequestHeaders() {
-		if (function_exists('apache_request_headers')) {	// Apache webserver
+		if (function_exists('apache_request_headers')) { // Apache webserver
 			return apache_request_headers();
 		}
-		return self::getServerHttpRequestHeaders();		// non-Apache webserver so parse $_SERVER
+		return self::getServerHttpRequestHeaders();  // non-Apache webserver so parse $_SERVER
 	}
 
 	/**
@@ -144,8 +143,8 @@ class RestKitComponent extends Component {
 		$result = array();
 		foreach ($_SERVER as $key => $value) {
 			if (substr($key, 0, 5) == "HTTP_") {
-				// this is chaos, basically it is just there to capitalize the first letter of every
-				// word that is not an initial HTTP and strip HTTP (code from przemek)
+				// this is chaos, basically it is just there to capitalize the first letter of
+				// every word that is not an initial HTTP and strip HTTP (code from przemek)
 				$key = str_replace(" ", "-", ucwords(strtolower(str_replace("_", " ", substr($key, 5)))));
 				$result[$key] = $value;
 			}

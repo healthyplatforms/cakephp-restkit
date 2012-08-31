@@ -49,7 +49,6 @@ class RestKitComponent extends Component {
 	 */
 	public function initialize(Controller $controller) {
 		self::setup($controller); // create references and add Cake Detectors
-		//self::validateRequest(); // only allow supported/enabled extensions
 	}
 
 	/**
@@ -75,9 +74,6 @@ class RestKitComponent extends Component {
 		$this->controller = $controller;
 		$this->request = $controller->request;
 		$this->response = $controller->response;
-
-		// Configure detectors
-		$this->addDetectors(); // pr($rhis->request) to view result
 	}
 
 	/**
@@ -312,92 +308,13 @@ class RestKitComponent extends Component {
 	}
 
 	/**
-	 * _enableExtensions() is used to enable servicing only those extensions that are
-	 * specified in config.php
+	 * _enableExtensions() is used to make sure that only those extensions defined
+	 * in config.php are serviced. All other requests will receive a 404.
 	 *
-	 * @todo get extensions from config
+	 * @return void
 	 */
 	private static function _enableExtensions() {
 		Router::parseExtensions();
 		Router::setExtensions(Configure::read('RestKit.Request.enabledExtensions'));
 	}
-
-	/**
-	 * addDetectors() is used to configure extra detectors for API requests
-	 *
-	 * Adds the following detectors for CakeRequest:
-	 * ->is('api')
-	 * ->is('json')
-	 * ->is('xml')
-	 *
-	 * @return void
-	 */
-	public function addDetectors() {
-		$this->request->addDetector('api', array('callback' => 'RestKitComponent::isApi'));
-		$this->request->addDetector('json', array('callback' => 'RestKitComponent::isJson'));
-		$this->request->addDetector('xml', array('callback' => 'RestKitComponent::isXml'));
-	}
-
-	/**
-	 * isApi() determines if the request is an API request.
-	 *
-	 * - currently only support for XML and JSON is implemented
-	 * - only extenions present in the the configuration array 'enabledExtensions'
-	 * will lead to isApi() returning TRUE. In other words, if 'json' is not defined
-	 * in the configuration file even a valid JSON call will lead to isApi() returning FALSE.
-	 *
-	 * @param CakeRequest $request
-	 * @return boolean
-	 */
-	public static function isApi(CakeRequest $request) {
-		if (in_array('json', Configure::read('RestKit.Request.enabledExtensions'))) {
-			if ($request->is('json')) {
-				return true;
-			}
-		}
-
-		if (in_array('xml', Configure::read('RestKit.Request.enabledExtensions'))) {
-			if ($request->is('xml')) {
-				return true;
-			}
-		}
-		return false;  // neither XML or JSON
-	}
-
-	/**
-	 * isJson() determines if a Json request was made
-	 *
-	 * @todo fix broken accept-headers checks
-	 *
-	 * @param CakeRequest $request
-	 * @return boolean
-	 */
-	public static function isJson(CakeRequest $request) {
-		if (isset($request->params['ext']) && $request->params['ext'] === 'json') {// check extension first
-			return true;
-		}
-		// then sniff the accept-header (will return false if not present)
-		//$acceptHeaders = $controller->request->parseAccept();
-		//if (in_array($acceptHeaders['1.0'][0], array('application/xml', 'application/json'))) {
-		// return;
-		//}
-		//
-		//OR TRY THIS
-		//return ($request->accepts('application/json'));
-	}
-
-	/**
-	 * isXml() determines if an XML request was made
-	 *
-	 * @todo add accept-headers checks (when fixed for JSON)
-	 *
-	 * @param CakeRequest $request
-	 * @return boolean
-	 */
-	public static function isXml(CakeRequest $request) {
-		if (isset($request->params['ext']) && $request->params['ext'] === 'xml') {
-			return true;
-		}
-	}
-
 }

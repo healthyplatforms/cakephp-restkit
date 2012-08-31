@@ -31,6 +31,13 @@ Clone the repository into /app/Plugin/RestKit:
 
      git submodule add git@github.com:bravo-kernel/cakephp-restkit.git Plugin/RestKit
 
+Load the following components in /app/Controller/AppController.php
+
+    public $components = array(
+        'Auth',
+        'RequestHandler',
+        'RestKit.RestKit');
+
 Enable the RestKit plugin in /app/Config/bootstrap.php:
 
     CakePlugin::load(array(
@@ -186,6 +193,7 @@ RestKit supports out-of-the box validation for the following URI options
 * **sort** either asc or desc
 
 # TODO
+* try loading AuthComponent from within the plugin for all calling controllers (now uses AppController)
 * add support for external authentication mechanism (will require a separate app with login functionality and e.g. OAuth service provider)
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)
 * make prefixed route exclusive when enabled (making the default (direct) Cake routes to the controllers no longer available)

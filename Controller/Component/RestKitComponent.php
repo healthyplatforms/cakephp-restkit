@@ -12,42 +12,42 @@ App::uses('RestOption', 'Model');
  */
 class RestKitComponent extends Component {
 
-/**
-* $errorBuffer will hold all error-messages to be included in the response
-*/
+	/**
+	 * $errorBuffer will hold all error-messages to be included in the response
+	 */
 	protected $_errors = array();
 
-/**
-* startup() is used to make the calling Controller available as $this->controller
-* and to return 404 errors for all non JSON/XML requests (when enabled in config.php)
-*
-* NOTE: startup() is called before the controller's beforeFilter()
-*
-* @param Controller $controller
-*/
+	/**
+	 * startup() is used to make the calling Controller available as $this->controller
+	 * and to return 404 errors for all non JSON/XML requests (when enabled in config.php)
+	 *
+	 * NOTE: startup() is called before the controller's beforeFilter()
+	 *
+	 * @param Controller $controller
+	 */
 	public function startup(Controller $controller) {
 		$this->controller = $controller;
 		$this->checkRequestMethod($controller);
 	}
 
-/**
-* _parseUriOptions() will use passed array as default options and will validate passed URI options against the Model's validation rules
-*
-* @param type $default_options
-* @return type array
-*/
+	/**
+	 * _parseUriOptions() will use passed array as default options and will validate passed URI options against the Model's validation rules
+	 *
+	 * @param type $default_options
+	 * @return type array
+	 */
 	public function parseUriOptions($default_options) {
 		$options = $this->_validateUriOptions($default_options);
 		return $options;
 	}
 
-/**
-* setError() is used to buffer error-messages to be included in the response
-*
-* @param string $optionName is the exact name of the URI option (e.g. limit, sort, etc)
-* @param string $type to specify the type of error (e.g. optionValidation)
-* @param string $message with informative information about the error
-*/
+	/**
+	 * setError() is used to buffer error-messages to be included in the response
+	 *
+	 * @param string $optionName is the exact name of the URI option (e.g. limit, sort, etc)
+	 * @param string $type to specify the type of error (e.g. optionValidation)
+	 * @param string $message with informative information about the error
+	 */
 	public function setError($type, $optionName, $message) {
 		array_push($this->_errors, array('Error' => array(
 			'type' => $type,
@@ -57,44 +57,44 @@ class RestKitComponent extends Component {
 			)));
 	}
 
-/**
-* _getErrors() ......
-*
-* @todo add documentation
-*/
+	/**
+	 * _getErrors() ......
+	 *
+	 * @todo add documentation
+	 */
 	public function getErrors() {
 		return $this->_errors;
 	}
 
-/**
-* render() is a convenient function used to set data in format as required for Viewless XML/Json rendering
-*
-* @param type $arrays in standard Cakephp find() result format
-* TODO calling without arguments now generates an empty JSON array. Maybe throw a 500 here so we can detect ?
-*/
+	/**
+	 * render() is a convenient function used to set data in format as required for Viewless XML/Json rendering
+	 *
+	 * @param type $arrays in standard Cakephp find() result format
+	 * TODO calling without arguments now generates an empty JSON array. Maybe throw a 500 here so we can detect ?
+	 */
 	public function render($arrays = array()) {
 		$this->_setViewData($arrays);
 	}
 
-/**
- * _setViewData() handles setting data and _serialize logic needed to render viewless XML/JSON responses 
- *
- * The following will be generated when a single array is passed
- * $this->set(array('users' => $users));
- * $this->set(array('_serialize' => array('users')));
- *
- * The following will be generated when multiple arrays are passed
- * $this->set(array('users' => $users, 'debug' => $debug));
- * $this->set(array('_serialize' => array('users', 'debug')));
- *
- * NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
- * $users = array('user' => Set::extract('{n}.User', $users));
- *
- * @todo include debug information only if enabled in configuration file
- *
- * @param mixed optional string used as the SimpleXml rootnode (e.g. users for <users>)
- * @param mixed array with default CakePHP find() result
- */
+	/**
+	 * _setViewData() handles setting data and _serialize logic needed to render viewless XML/JSON responses
+	 *
+	 * The following will be generated when a single array is passed
+	 * $this->set(array('users' => $users));
+	 * $this->set(array('_serialize' => array('users')));
+	 *
+	 * The following will be generated when multiple arrays are passed
+	 * $this->set(array('users' => $users, 'debug' => $debug));
+	 * $this->set(array('_serialize' => array('users', 'debug')));
+	 *
+	 * NOTE arrays passed (resulting from 'find' queries MUST be re-formatted using the following:
+	 * $users = array('user' => Set::extract('{n}.User', $users));
+	 *
+	 * @todo include debug information only if enabled in configuration file
+	 *
+	 * @param mixed optional string used as the SimpleXml rootnode (e.g. users for <users>)
+	 * @param mixed array with default CakePHP find() result
+	 */
 	protected function _setViewData($arrays) {
 
 		// add debug information to the JSON response
@@ -108,15 +108,15 @@ class RestKitComponent extends Component {
 
 			$simpleXml = $this->formatCakeFindResultForSimpleXML($array);
 			$defaultRootNode = key($simpleXml);
-			
+
 			// Manipulate $simpleXml array if a rootnode-string is passed
-			if (is_string($key)){
+			if (is_string($key)) {
 				$simpleXml[$key] = $simpleXml[$defaultRootNode];
-				unset ($simpleXml[$defaultRootNode]);
-			}else{
+				unset($simpleXml[$defaultRootNode]);
+			} else {
 				$key = $defaultRootNode;
 			}
-			
+
 			// make data available and remember the key for mass _serialize()
 			$this->controller->set($simpleXml);
 			$key = key($simpleXml);
@@ -126,17 +126,17 @@ class RestKitComponent extends Component {
 		$this->controller->set(array('_serialize' => $serializeKeynames));
 	}
 
-/**
- * formatCakeFindResultForSimpleXML() reformats default CakePHP arrays produced
- * by find() queries into a format that is suitable for passing to SimpleXML
- *
- * @param mixed CakePHP find() result
- * @return mixed array ready for passing to SimpleXml
- */
-	public function formatCakeFindResultForSimpleXML($cakeFindResult){
+	/**
+	 * formatCakeFindResultForSimpleXML() reformats default CakePHP arrays produced
+	 * by find() queries into a format that is suitable for passing to SimpleXML
+	 *
+	 * @param mixed CakePHP find() result
+	 * @return mixed array ready for passing to SimpleXml
+	 */
+	public function formatCakeFindResultForSimpleXML($cakeFindResult) {
 
 		// make findById() and find('first') format identical to find() format
-		if (Hash::check($cakeFindResult, '{s}')){
+		if (Hash::check($cakeFindResult, '{s}')) {
 			$temp = $cakeFindResult;
 			unset($cakeFindResult);
 			$cakeFindResult[] = $temp;
@@ -144,21 +144,21 @@ class RestKitComponent extends Component {
 
 		$recordIndex = 0;
 		$simpleXmlArray = array();
-		foreach ($cakeFindResult as $foundRecord){
+		foreach ($cakeFindResult as $foundRecord) {
 
 			$modelIndex = 0;
-			foreach (array_keys($cakeFindResult[0]) as $modelKey){		// multiple root Models mean associations present (recursive > 1)
-				$modelUnderscored = Inflector::underscore($modelKey);	//e.g. ExamprepCustom to examprep_custom
-				$extracted = array($modelUnderscored =>  Hash::extract($foundRecord, "{$modelKey}"));
+			foreach (array_keys($cakeFindResult[0]) as $modelKey) {  // multiple root Models mean associations present (recursive > 1)
+				$modelUnderscored = Inflector::underscore($modelKey); //e.g. ExamprepCustom to examprep_custom
+				$extracted = array($modelUnderscored => Hash::extract($foundRecord, "{$modelKey}"));
 
 				// first Model needs to be processed differently
-				if ($modelIndex == 0){
+				if ($modelIndex == 0) {
 					$rootKey = $modelUnderscored;
-					$rootKeyPluralized = Inflector::pluralize($rootKey);	// store to return as the root-node later (e.g. users)
-					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}");	// extract only array-keys to prevent double <tags>
-				}else{
+					$rootKeyPluralized = Inflector::pluralize($rootKey); // store to return as the root-node later (e.g. users)
+					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex] = Hash::extract($extracted, "{$modelUnderscored}"); // extract only array-keys to prevent double <tags>
+				} else {
 					$pluralized = Inflector::pluralize($modelUnderscored);
-					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex][$pluralized]= $extracted;						
+					$simpleXmlArray[$rootKeyPluralized][$rootKey][$recordIndex][$pluralized] = $extracted;
 				}
 				$modelIndex++;
 			}
@@ -167,15 +167,15 @@ class RestKitComponent extends Component {
 		return $simpleXmlArray;
 	}
 
-/**
- * _checkExtension() is used to:
- * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)
- * - allow only specific pages to be requested as HTML (e.g. for OAuth or logging in)
- *
- * @TODO decide whether to add support for specified exceptions in controller::action pairs
- *
- * @param void
- */
+	/**
+	 * _checkExtension() is used to:
+	 * - prevent a 500-error for html calls to XML/JSON actions with no existing html views (and instead return a 404)
+	 * - allow only specific pages to be requested as HTML (e.g. for OAuth or logging in)
+	 *
+	 * @TODO decide whether to add support for specified exceptions in controller::action pairs
+	 *
+	 * @param void
+	 */
 	public function checkRequestMethod(Controller $controller) {
 
 		// skip if .xml or .json extension is used
@@ -230,47 +230,124 @@ class RestKitComponent extends Component {
 		return $modelMerged;
 	}
 
+	/**
+	 * routes() is used to provide the functionality normally used in routes.php like
+	 * setting the allowed extensions, prefixing, etc.
+	 */
+	public static function routes() {
+		self::_mapResources();
+		self::_enableExtensions();
+	}
 
-/**
- * routes() is used to provide the functionality normally used in routes.php like
- * setting the allowed extensions, prefixing, etc.
- */
-    public static function routes() {
-	   self::_mapResources();
-	   self::_enableExtensions();
-
-    }
-/**
- * _mapResources() is used to enable REST for controllers + enable prefix routing (if enabled)
- */
+	/**
+	 * _mapResources() is used to enable REST for controllers + enable prefix routing (if enabled)
+	 */
 	private static function _mapResources() {
 
-		if (Configure::read('RestKit.Request.prefix') == true){
+		if (Configure::read('RestKit.Request.prefix') == true) {
 			Router::mapResources(
-				array('Users','Exampreps'),
-				array('prefix' => '/' . Configure::read('RestKit.Request.prefix') . '/')
+				array('Users', 'Exampreps'), array('prefix' => '/' . Configure::read('RestKit.Request.prefix') . '/')
 			);
 
 			// skip loading Cake's default routes when forcePrefix is disabled in config
-			if (Configure::read('RestKit.Request.forcePrefix') == false){
+			if (Configure::read('RestKit.Request.forcePrefix') == false) {
 				require CAKE . 'Config' . DS . 'routes.php';
 			}
-		}else{
-			require CAKE . 'Config' . DS . 'routes.php';	// load CakePHP''s default routes
+		} else {
+			require CAKE . 'Config' . DS . 'routes.php'; // load CakePHP''s default routes
 			Router::mapResources(
-				array('Users','Exampreps')
+				array('Users', 'Exampreps')
 			);
 		}
 	}
 
-/**
- * _enableExtensions() is used to enable servicing only those extensions that are
- * specified in config.php
- *
- * @todo get extensions from config
- */
-	private static function _enableExtensions(){
+	/**
+	 * _enableExtensions() is used to enable servicing only those extensions that are
+	 * specified in config.php
+	 *
+	 * @todo get extensions from config
+	 */
+	private static function _enableExtensions() {
 		Router::parseExtensions();
 		Router::setExtensions(Configure::read('RestKit.Request.enabledExtensions'));
 	}
+
+	/**
+	 * addDetectors() is used to configure extra detectors for API requests
+	 *
+	 * Adds the following detectors for CakeRequest:
+	 * ->is('api')
+	 * ->is('json')
+	 * ->is('xml')
+	 *
+	 * @return void
+	 */
+	public function addDetectors() {
+		$this->request->addDetector('api', array('callback' => 'RestKitComponent::isApi'));
+		$this->request->addDetector('json', array('callback' => 'RestKitComponent::isJson'));
+		$this->request->addDetector('xml', array('callback' => 'RestKitComponent::isXml'));
+	}
+
+	/**
+	 * isApi() determines if the request is an API request.
+	 *
+	 * - currently only support for XML and JSON is implemented
+	 * - only extenions present in the the configuration array 'enabledExtensions'
+	 * will lead to isApi() returning TRUE. In other words, if 'json' is not defined
+	 * in the configuration file even a valid JSON call will lead to isApi() returning FALSE.
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isApi(CakeRequest $request) {
+		if (in_array('json', Configure::read('RestKit.Request.enabledExtensions'))) {
+			if ($request->is('json')) {
+				return true;
+			}
+		}
+
+		if (in_array('xml', Configure::read('RestKit.Request.enabledExtensions'))) {
+			if ($request->is('xml')) {
+				return true;
+			}
+		}
+		return false;  // neither XML or JSON
+	}
+
+	/**
+	 * isJson() determines if a Json request was made
+	 *
+	 * @todo fix broken accept-headers checks
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isJson(CakeRequest $request) {
+		if (isset($request->params['ext']) && $request->params['ext'] === 'json') {// check extension first
+			return true;
+		}
+		// then sniff the accept-header (will return false if not present)
+		//$acceptHeaders = $controller->request->parseAccept();
+		//if (in_array($acceptHeaders['1.0'][0], array('application/xml', 'application/json'))) {
+			// return;
+		//}
+		//
+		//OR TRY THIS
+		//return ($request->accepts('application/json'));
+	}
+
+	/**
+	 * isXml() determines if an XML request was made
+	 *
+	 * @todo add accept-headers checks (when fixed for JSON)
+	 *
+	 * @param CakeRequest $request
+	 * @return boolean
+	 */
+	public static function isXml(CakeRequest $request) {
+		if (isset($request->params['ext']) && $request->params['ext'] === 'xml') {
+			return true;
+		}
+	}
+
 }

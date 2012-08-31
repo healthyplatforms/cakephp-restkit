@@ -60,37 +60,26 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	public function restKit(RestKitException $error) {
 
 		// Define our custom error-information here
-		$attributes = $error->getAttributes();
-		$message = $attributes['message'];
-		$errorCode = $attributes['errorCode'];
-
+		//$attributes = $error->getAttributes();
+		//$message = $attributes['message'];
+		//$errorCode = $attributes['errorCode'];
 		// The following variables are required by Cake's default error views
-		$url = $this->controller->request->here();
-		$statusCode = $error->getCode();
-		$this->controller->response->statusCode($statusCode);
-		$this->controller->response->statusCode(666);
+		//$url = $this->controller->request->here();
+		//$statusCode = $error->getCode();
+		//$this->controller->response->statusCode(666);
+		//$this->controller->set(array(
+		//   'status' => '123',
+		//    'name' => 'fuck you and your name',
+		//    'message' => 'message',
+		//    'url' => 'url',
+		//    'moreInfo' => 'moreInfo',
+		//    'error' => $error,
+		//    '_serialize' => array('status', 'name', 'message', 'code', 'moreInfo',) // don't forget to serialize custom info here as well
+		//));
 
-//		$moreInfo = "http://www.bravo-kernel.com/docs/errors/$errorCode";
-		// We exclude 'url' from serialization because we do not want it to
-		// show up in our JSON/XML responses. We do set them for the controller
-		// because the Cake html error-views require it to be present.
-//		if (!isset($attributes['message'])){
-//			$attributes['message'] = "no message provided";
-//		}
-
-
-		$this->controller->set(array(
-		    'status' => '123',
-		    'name' => 'fuck you and your name',
-		    'message' => 'message',
-		    'url' => 'url',
-		    'moreInfo' => 'moreInfo',
-		    'error' => $error,
-		    '_serialize' => array('status', 'name', 'message', 'code', 'moreInfo',) // don't forget to serialize custom info here as well
-		));
-
-		// this will make sure rest.ctp is used
-		$this->_outputMessage($this->template);
+		$this->_setRichErrorInformation($error);
+		$this->controller->response->statusCode($error->getCode());  // this will use our custom HTTP Status Code (if defined in config)
+		$this->_outputMessage($this->template);  // this will make sure restkit.ctp is used
 	}
 
 	/**
@@ -136,8 +125,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 *
 	 * Also note that we set $name and $url here as well because they are required by the default HTML error-views.
 	 *
-	 * @todo differentiate between REST and HTML responses so we can fill the REST errors with meaningfull
-	 * messages when in production. Simply put: the message 'not found' will no appear in the REST response
+	 * @todo add a check to detect REST or HTML so we can fill the REST errors with more meaningfull
+	 * messages in production environments. Simply put: 'not found' will now appear in the REST response
 	 * even though Access Denied would be better (also keeping the moreInfo link in mind).
 	 *
 	 * @param CakeException $error
@@ -145,7 +134,7 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	private function _setRichErrorInformation(CakeException $error) {
 
 		$url = $this->controller->request->here();
-		$code = ($error->getCode() >= 400 && $error->getCode() < 506) ? $error->getCode() : 500;
+		$code = $error->getCode();
 
 		$message = h($error->getMessage());
 		if ($debug == 0) {

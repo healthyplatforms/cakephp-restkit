@@ -29,57 +29,17 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		return $controller;
 	}
 
-	protected function _getControllerDISABLED($exception) {
-		if (!$request = Router::getRequest(false)) {
-			$request = new CakeRequest();
-		}
-		$response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
-		try {
-			$controller = new CakeErrorController($request, $response);
-		} catch (Exception $e) {
-			$controller = new Controller($request, $response);
-			$controller->viewPath = 'Errors';
-		}
-
-		// make additional custom HTTP Status Codes available
-		$controller->response->httpCodes(Configure::read('RestKit.httpCodes'));
-		return $controller;
-	}
-
 	/**
 	 * restKit() is needed here because we defined RestException
 	 *
-	 * Standard CakePHP errors require the following to properly render:
-	 * - variable $name
-	 * - $error Object
-	 *
-	 *
-	 * @param type $error
+	 * @param type RestKitException $error
 	 * return void
 	 */
 	public function restKit(RestKitException $error) {
 
-		// Define our custom error-information here
-		//$attributes = $error->getAttributes();
-		//$message = $attributes['message'];
-		//$errorCode = $attributes['errorCode'];
-		// The following variables are required by Cake's default error views
-		//$url = $this->controller->request->here();
-		//$statusCode = $error->getCode();
-		//$this->controller->response->statusCode(666);
-		//$this->controller->set(array(
-		//   'status' => '123',
-		//    'name' => 'fuck you and your name',
-		//    'message' => 'message',
-		//    'url' => 'url',
-		//    'moreInfo' => 'moreInfo',
-		//    'error' => $error,
-		//    '_serialize' => array('status', 'name', 'message', 'code', 'moreInfo',) // don't forget to serialize custom info here as well
-		//));
-
 		$this->_setRichErrorInformation($error);
 		$this->controller->response->statusCode($error->getCode());  // this will use our custom HTTP Status Code (if defined in config)
-		$this->_outputMessage($this->template);  // this will make sure restkit.ctp is used
+		$this->_outputMessage('restkit');  // this will make sure restkit.ctp is used
 	}
 
 	/**
@@ -137,11 +97,12 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		$code = $error->getCode();
 
 		$message = h($error->getMessage());
-		if ($debug == 0) {
-			if ($code >= 400 && $code < 500) {
-				$message = "The requested resource was not found";
-			} else {
-				$message = 'An internal error prevented processing your request';
+		if (Configure::read('debug') == 0) {
+			$httpCode = $this->controller->response->httpCodes($code);
+			if ($httpCode){
+				$message = $httpCode[$code];
+			}else{
+				$message = "Unknown HTTP Status Code Detected";
 			}
 		}
 

@@ -13,21 +13,71 @@ App::uses('RestOption', 'Model');
 class RestKitComponent extends Component {
 
 	/**
-	 * $errorBuffer will hold all error-messages to be included in the response
+	 * $controller holds a reference to the current controller
+	 *
+	 * @var Controller
+	 */
+	protected $controller;
+
+	/**
+	 * $request holds a reference to the current request
+	 *
+	 * @var CakeRequest
+	 */
+	protected $request;
+
+	/**
+	 * $response holds a reference to the current response
+	 *
+	 * @var CakeResponse
+	 */
+	protected $response;
+
+	/**
+	 * $_errors holds all error-messages to be included in the response
 	 */
 	protected $_errors = array();
 
 	/**
-	 * startup() is used to make the calling Controller available as $this->controller
-	 * and to return 404 errors for all non JSON/XML requests (when enabled in config.php)
+	 * initialize() is used to setup references to the the calling Controller, add
+	 * Cake Detectors and to enforce REST-only
 	 *
-	 * NOTE: startup() is called before the controller's beforeFilter()
+	 * Note: initialize() is run before the calling Controller's beforeFilter()
 	 *
 	 * @param Controller $controller
+	 * @return void
+	 */
+	public function initialize(Controller $controller) {
+		self::setup($controller); // create references and add Cake Detectors
+		//self::validateRequest(); // only allow supported/enabled extensions
+	}
+
+	/**
+	 * startup() is used to handle Authentication, Autorization, etc.
+	 *
+	 * Note: startup() is called after the calling Controller's beforeFilter()
+	 *
+	 * @param Controller $controller
+	 * @return void
 	 */
 	public function startup(Controller $controller) {
+
+	}
+
+	/**
+	 * setup() is used to configure the RestKit component
+	 *
+	 * @param Controller $controller
+	 * @return void
+	 */
+	protected function setup(Controller $controller) {
+		// Cache local properties from the controller
 		$this->controller = $controller;
-		$this->checkRequestMethod($controller);
+		$this->request = $controller->request;
+		$this->response = $controller->response;
+
+		// Configure detectors
+		$this->addDetectors(); // pr($rhis->request) to view result
 	}
 
 	/**
@@ -329,7 +379,7 @@ class RestKitComponent extends Component {
 		// then sniff the accept-header (will return false if not present)
 		//$acceptHeaders = $controller->request->parseAccept();
 		//if (in_array($acceptHeaders['1.0'][0], array('application/xml', 'application/json'))) {
-			// return;
+		// return;
 		//}
 		//
 		//OR TRY THIS

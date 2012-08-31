@@ -58,7 +58,7 @@ class RestKitComponent extends Component {
 	 * @return void
 	 */
 	public function initialize(Controller $controller) {
-		self::setup($controller);	// create references and add Cake Detectors
+		self::setup($controller); // create references and add Cake Detectors
 		//self::validateRequest();	// only allow supported/enabled extensions
 	}
 
@@ -87,8 +87,7 @@ class RestKitComponent extends Component {
 		$this->response = $controller->response;
 
 		// Configure detectors
-		$this->addDetectors();
-		//pr($this->request);
+		$this->addDetectors();	// pr($rhis->request) to view result
 	}
 
 	/**
@@ -98,7 +97,7 @@ class RestKitComponent extends Component {
 	 * @todo hook this function into overall logic (now ignored)
 	 * @return boolean true if valid
 	 */
-	protected function validateRequest(){
+	protected function validateRequest() {
 		// return a 404 error in production mode for all non-enabled extensions
 		if (!$this->request->is('api')) {
 			return true;
@@ -108,13 +107,13 @@ class RestKitComponent extends Component {
 
 	/**
 	 *
-	 * @return type
+	 * @return boolean
 	 */
-	public function isAuthorized(){
+	public function isAuthorized() {
 
 		// Skip authentication/authorization if this is a public resource
 		if (in_array($this->controller->action, $this->publicActions)) {
-			pr("Public action, skip authentication/authorization");
+			pr("Public action, skip authentication/authorization. Produce response.");
 			return;
 		}
 
@@ -133,23 +132,24 @@ class RestKitComponent extends Component {
 		//	TRUE: present data
 		//	FALSE: deny
 		// =============================================================
-
-		// Skip authentication if user is already authenticated. Otherwise
-		// continue straight with the authorization flow.
-		if (self::isAuthenticated()){
-			pr("User is already authenticated");
+		// Check if user is already authenticated
+		if ($this->isAuthenticated()){
+			pr("User is already authenticated, continue with Authorization");
 		}
+
 		pr("NOT AUTHENTICATED: produce correct WWW-Authenticate response");
+
+
 
 
 		// get the authentication method was used
 		$authorizationRequestHeader = self::getHttpRequestHeader('authorization');
 		pr("Authorization header = $authorizationRequestHeader");
 
-
 		//$auth_method = $request_headers['Authorization'];
 		//pr("Requested AUTH method = $auth_method");
 	}
+
 
 	/**
 	 * isAuthenticated() is used to determine if the requestor is already authenticated.
@@ -158,7 +158,7 @@ class RestKitComponent extends Component {
 	 *
 	 * @return boolean
 	 */
-	private static function isAuthenticated(){
+	private static function isAuthenticated() {
 		return false;
 	}
 
@@ -201,10 +201,6 @@ class RestKitComponent extends Component {
 		unset($this->publicActions[$pos]);
 		return true;
 	}
-
-
-
-
 
 	/**
 	 * getHttpRequestHeader() is a helper function used to retrieve the value
@@ -261,7 +257,6 @@ class RestKitComponent extends Component {
 		}
 		return $result;
 	}
-
 
 	/**
 	 * hasError() checks if the current controller is an Error controller

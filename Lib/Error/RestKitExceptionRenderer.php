@@ -18,7 +18,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	public $method = '';
 
 	/**
-	 * Override of default Cake method (in subclasses) to send CUSTOM HTTP Status Codes
+	 * _getController() is an override of the default Cake method (in subclasses) and is used
+	 * to send CUSTOM HTTP Status Codes
 	 *
 	 * @param Exception $exception The exception to get a controller for.
 	 * @return Controller
@@ -29,8 +30,19 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		return $controller;
 	}
 
+ 	public function __construct($message = null, $code = 666) {
+		if (empty($message)) {
+			$message = 'RestKit Error';
+		}
+		parent::__construct($message, $code);
+	}
+
 	/**
-	 * restKit() is needed here because we defined RestException
+	 * restKit() is used when throwing a RestKitException
+	 *
+	 * Calling it with
+	 *
+	 * @todo fix crash when throwing RestKitException() without message-string
 	 *
 	 * @param type RestKitException $error
 	 * return void
@@ -91,24 +103,16 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 *
 	 * @param CakeException $error
 	 */
-	private function _setRichErrorInformation(CakeException $error) {
+	private function _setRichErrorInformation($error) {
 
 		$url = $this->controller->request->here();
 		$code = $error->getCode();
-
-		$message = h($error->getMessage());
-		if (Configure::read('debug') == 0) {
-			$httpCode = $this->controller->response->httpCodes($code);
-			if ($httpCode){
-				$message = $httpCode[$code];
-			}else{
-				$message = "Unknown HTTP Status Code Detected";
-			}
-		}
+		$message = $this->_getRichErrorMessage($error);
 
 		// the HTTP Response Header "Status Code" is set here
 		$this->controller->response->statusCode($code);
 
+		// set variables for both view and viewless JSON/XML
 		$this->controller->set(array(
 		    'name' => $message,
 		    'url' => $url,
@@ -119,6 +123,39 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		    'error' => $error,
 		    '_serialize' => array('status', 'message', 'code', 'moreInfo')
 		));
+	}
+
+	/**
+	 * _getRichErrorMessage() is used to return the appropriate error-message.
+	 *
+	 * When debug=0 all error messages (except those of type RestKitException)
+	 * will be reset to the corresponding HTTP Status Code as found in
+	 * CakeResponse::httpCodes() to prevent sensitive information slipping
+	 * into the public.
+	 *
+	 * For CakeExceptions we retrieve the message using $error->getMessage().
+	 * For RestKitExceptions we retrieve the message using:
+	 * - either $error->getMessage() when the exception was declared using the shortcut form
+	 * - or by parsing the $error->getAttributes() array if the exception was declared using the options array
+	 *
+	 * @param $error
+	 * @return string
+	 */
+	private function _getRichErrorMessage($error) {
+
+		// always retrieve the full error message
+		$message = h($error->getMessage());
+		if ($error instanceof RestKitException && (!$message)) { // option-array passed
+			$attributes = $error->getAttributes();
+			$message = $attributes['message'];
+		}
+
+		// not in debug mode so reset all error messages (excluding RestKitException messages)
+		if (Configure::read('debug') == 0 && (!$error instanceof RestKitException)) {
+			$message = $this->controller->response->httpCodes($error->getCode());
+			$message = $message[$error->getCode()];
+		}
+		return $message;
 	}
 
 }

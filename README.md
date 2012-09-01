@@ -133,22 +133,69 @@ Find() results with associated Models will produce the following XML:
       </users>
     </response>
 
-### Custom Exceptions
-Use the RestKitException to return errors with custom HTTP Status Codes and rich
-error information:
+### Default Exceptions
 
-    throw new RestKitException(array('message' => 'You are overloading my API', 'errorCode' => 12345), 666);
+RestKit uses the RestKitExceptionRenderer to repond to REST errors with rich error information and
+corresponding HTTP Status Codes.
 
-To return the following XML along with a Response Header using Status Code 666 and message 'Something very evil':
+In debug-mode all information messages will appear in the response. When not in
+debug-mode all error messages will be reset to the corresponding HTTP Status Code
+description to prevent any sensitive information from becoming public.
+
+**NotFoundException() example**
 
     <response>
-      <status>666</status>
-      <message>You are overloading my API</message>
-      <code>12345</code>
-      <moreInfo>http://www.bravo-kernel.com/docs/errors/12345</moreInfo>
+        <status>404</status>
+        <message>Not Found</message>
+        <code>12001</code>
+        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12001</moreInfo>
     </response>
 
-**Note:** custom Status Codes and messages must be defined in /RestKit/Config/config.php
+**ForbiddenException() example**
+
+    <response>
+        <status>403</status>
+        <message>Forbidden</message>
+        <code>12002</code>
+        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12002</moreInfo>
+     </response>
+
+**Programming error in non-debug mode**
+
+    <response>
+        <status>500</status>
+        <message>Internal Server Error</message>
+        <code>12003</code>
+        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12003</moreInfo>
+    </response>
+
+**Programming error in debug mode**
+
+    <response>
+        <status>500</status>
+        <message>
+            Call to undefined method RestKitComponent::crashMe()
+        </message>
+        <code>500</code>
+        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12001</moreInfo>
+    </response>
+
+### RestKitExceptions
+
+RestKitExceptions error messages are usefull for providing informational error feedback
+about your application's internal usage. The error messages will appear in both debug and
+non-debug mode using and will respond with a custom HTTP Status Code (666) and description (RestKit).
+
+Please note that custom HTTP Status Codes and messages must be defined in /RestKit/Config/config.php
+
+* `throw new RestKitException();`
+
+* `throw new RestKitException('Invalid phone number')`
+
+* `throw new RestKitException('Invalid phone number', 666)`
+
+* `throw new RestKitException(array('message' => 'Invalid phone number', 'errorCode' => 12345), 666);`
+
 
 ### Validating URI parameters
 

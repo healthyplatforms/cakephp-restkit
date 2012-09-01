@@ -29,6 +29,12 @@ Clone the repository into /app/Plugin/RestKit:
 
      git submodule add git@github.com:bravo-kernel/cakephp-restkit.git Plugin/RestKit
 
+Load the following components in /app/Controller/AppController.php
+
+    public $components = array(
+        'RequestHandler',
+        'RestKit.RestKit');
+
 Enable the RestKit plugin in /app/Config/bootstrap.php:
 
     CakePlugin::load(array(

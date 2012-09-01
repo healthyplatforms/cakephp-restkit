@@ -43,7 +43,6 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	public function restKit(RestKitException $error) {
 
 		$this->_setRichErrorInformation($error);
-		$this->controller->response->statusCode($error->getCode());  // this will use our custom HTTP Status Code (if defined in config)
 		$this->_outputMessage('restkit');  // this will make sure restkit.ctp is used
 	}
 
@@ -102,8 +101,15 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		$code = $error->getCode();
 		$message = $this->_getRichErrorMessage($error);
 
-		// the HTTP Response Header "Status Code" is set here
-		$this->controller->response->statusCode($code);
+		// Reset the the HTTP Response Header "Status Code" to 500 if it
+		// does not exist in the RequestResponse::httpCodes() to prevent internal errors.
+		$httpCode = $this->controller->response->httpCodes($code);
+		if ($httpCode[$code]){
+			$this->controller->response->statusCode($code);
+		}else{
+			$this->controller->response->statusCode(500);
+			$code = 500;
+		}
 
 		// set variables for both view and viewless JSON/XML
 		$this->controller->set(array(

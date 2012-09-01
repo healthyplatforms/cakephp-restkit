@@ -142,8 +142,8 @@ Please note that behavior in non-debug-mode is different than that of Cake (retu
 the 404 and 500 errors). In non-debug-mode the error response will contain:
 * the actual HTTP Status Code
 * the actual HTTP Status Code description
-* an error message reset to the actual description of the HTTP Status Code
-to prevent any sensitive information from becoming public
+* an error message reset to the description of the HTTP Status Code to prevent
+any sensitive information from becoming public
 
 **NotFoundException() example**
 

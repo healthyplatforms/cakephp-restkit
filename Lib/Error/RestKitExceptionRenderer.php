@@ -158,8 +158,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	}
 
 	/**
-	 * _getMoreInfo() is used to auto-generate a link to your API documentation website
-	 * using the status-code passed.
+	 * _getMoreInfo() auto-generates a moreInfo link by using the moreInfo base URL
+	 * specified in the RestKit configfile) and then appending the HTTP Status Code.
 	 *
 	 * CakeExceptions will lead to links using the "valid" HTTP Status Code, e.g.:
 	 * - http://www.yourapidocs.com/403
@@ -168,6 +168,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 * RestKitExceptions will lead to links using the default 500 or the $code parameter passed, e.g.:
 	 * - http://www.apidocs.com/500
 	 * - http://www.apidocs.com/12004
+	 *
+	 * @todo add support for link extension?
 	 *
 	 * @param type $error
 	 * @return string

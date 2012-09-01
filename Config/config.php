@@ -53,6 +53,6 @@ $config['RestKit'] = array(
 //		502 => 'Bad Gateway',
 //		503 => 'Service Unavailable',
 //		504 => 'Gateway Time-out',
-		666 => 'Something very evil',
+		666 => 'RestKit',
     )
 );

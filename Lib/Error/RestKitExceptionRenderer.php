@@ -30,13 +30,6 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		return $controller;
 	}
 
- 	public function __construct($message = null, $code = 666) {
-		if (empty($message)) {
-			$message = 'RestKit Error';
-		}
-		parent::__construct($message, $code);
-	}
-
 	/**
 	 * restKit() is used when throwing a RestKitException
 	 *

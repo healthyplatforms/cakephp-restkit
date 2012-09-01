@@ -170,7 +170,7 @@ any sensitive information from becoming public
         <message>
             Call to undefined method RestKitComponent::crashMe()
         </message>
-        <code>500</code>
+        <code>12003</code>
         <moreInfo>http:///www.bravo-kernel.com/docs/errors/12001</moreInfo>
     </response>
 

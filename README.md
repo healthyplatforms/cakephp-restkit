@@ -151,15 +151,6 @@ the 404 and 500 errors) in that the response will contain:
 * an error message reset to the description of the HTTP Status Code to prevent
 any sensitive information from becoming public
 
-**NotFoundException() example**
-
-    <response>
-        <status>500</status>
-        <message>RestKit Error</message>
-        <code>500</code>
-        <moreInfo>http:///www.bravo-kernel.com/docs/errors/500</moreInfo>
-    </response>
-
 **ForbiddenException() example**
 
     <response>

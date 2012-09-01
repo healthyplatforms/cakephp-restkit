@@ -31,6 +31,17 @@ class RestKitException extends CakeException {
 	 * throw new RestException(array('RestError', 'myDetails' => array('message' => 'Just testing', 'moreInfo' => 'http://www.bravo-kernel.com/errors/123'), 'foo' => 'bar'), 501);
 	 */
 
-	//protected $_messageTemplate = 'It seems that a %s has occured';	// would be passed as $name when enabled
 
+	/**
+	 * _construct() is used to prevent internal errors wheb throwing a RestKitException without parameters
+	 *
+	 * @param string $message
+	 * @param type $code
+	 */
+	public function __construct($message = null, $code = 666) {
+		if (empty($message)) {
+			$message = 'RestKit Error';
+		}
+		parent::__construct($message, $code);
+	}
 }

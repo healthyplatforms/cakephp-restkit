@@ -139,11 +139,11 @@ RestKit uses the RestKitExceptionRenderer to respond with REST errors containing
 corresponding HTTP Status Codes.
 
 Please note that behavior in non-debug-mode is different than that of Cake (returning only
-the 404 and 500 errors). In non-debug-mode the error response will:
-* contain the actual HTTP Status Code
-* contain the actual HTTP Status Code description
-* an error message reset to the actual HTTP Status Code description
-to prevent any sensitive information from becoming public.
+the 404 and 500 errors). In non-debug-mode the error response will contain:
+* the actual HTTP Status Code
+* the actual HTTP Status Code description
+* an error message reset to the actual description of the HTTP Status Code
+to prevent any sensitive information from becoming public
 
 **NotFoundException() example**
 

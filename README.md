@@ -185,11 +185,11 @@ any sensitive information from becoming public
 
 ### RestKitExceptions
 
-RestKitExceptions error messages are usefull for providing informational error feedback
-about your application's internal usage. The error messages will appear in both debug and
-non-debug mode using and will respond with a custom HTTP Status Code (666) and description (RestKit).
+RestKitExceptions are useful if you want to provide informational feedback about your application's
+internal usage because the error messages will appear in both debug and non-debug mode. Besides that
+the response will also return a custom HTTP Status Code (666) and description (RestKit).
 
-Please note that custom HTTP Status Codes and messages must be defined in /RestKit/Config/config.php
+Please note that custom HTTP Status Codes must be defined in /RestKit/Config/config.php
 
 * `throw new RestKitException();`
 

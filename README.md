@@ -135,12 +135,15 @@ Find() results with associated Models will produce the following XML:
 
 ### Default Exceptions
 
-RestKit uses the RestKitExceptionRenderer to repond to REST errors with rich error information and
+RestKit uses the RestKitExceptionRenderer to respond with REST errors containing rich error information and
 corresponding HTTP Status Codes.
 
-In debug-mode all information messages will appear in the response. When not in
-debug-mode all error messages will be reset to the corresponding HTTP Status Code
-description to prevent any sensitive information from becoming public.
+Please note that behavior in non-debug-mode is different than that of Cake (returning only
+the 404 and 500 errors). In non-debug-mode the error response will:
+* contain the actual HTTP Status Code
+* contain the actual HTTP Status Code description
+* an error message reset to the actual HTTP Status Code description
+to prevent any sensitive information from becoming public.
 
 **NotFoundException() example**
 
@@ -160,15 +163,6 @@ description to prevent any sensitive information from becoming public.
         <moreInfo>http:///www.bravo-kernel.com/docs/errors/12002</moreInfo>
      </response>
 
-**Programming error in non-debug mode**
-
-    <response>
-        <status>500</status>
-        <message>Internal Server Error</message>
-        <code>12003</code>
-        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12003</moreInfo>
-    </response>
-
 **Programming error in debug mode**
 
     <response>
@@ -178,6 +172,15 @@ description to prevent any sensitive information from becoming public.
         </message>
         <code>500</code>
         <moreInfo>http:///www.bravo-kernel.com/docs/errors/12001</moreInfo>
+    </response>
+
+**Programming error in non-debug mode**
+
+    <response>
+        <status>500</status>
+        <message>Internal Server Error</message>
+        <code>12003</code>
+        <moreInfo>http:///www.bravo-kernel.com/docs/errors/12003</moreInfo>
     </response>
 
 ### RestKitExceptions

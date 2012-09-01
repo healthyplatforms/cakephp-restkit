@@ -14,8 +14,8 @@ Current limitations:
 
 ## Features
 
+* rich XML/Json errors
 * custom HTTP Status Codes
-* custom XML/Json errors (with the RestKitExceptionHandler)
 * vaidation rules for URI parameters
 * version prefixing (e.g. /v1/)
 
@@ -219,6 +219,8 @@ RestKit supports out-of-the box validation for the following URI options
 
 # TODO
 
+* implement moreInfo logic for exceptions
+* normalize html error responses (now share REST logic)
 * add security (deny all unless authorized)
 * add OAuth token handling (will require a separate app with OAuth server and login functionality)
 * add an extra 'exception' tag for returned error XML (requires overriding default XmlView somehow)

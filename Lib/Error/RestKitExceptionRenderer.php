@@ -26,7 +26,7 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 */
 	protected function _getController($exception) {
 		$controller = parent::_getController($exception);
-		$controller->response->httpCodes(Configure::read('RestKit.statusCodes'));
+		$controller->response->httpCodes(Configure::read('RestKit.Response.statusCodes'));
 		return $controller;
 	}
 
@@ -104,9 +104,9 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		// Reset the the HTTP Response Header "Status Code" to 500 if it
 		// does not exist in the RequestResponse::httpCodes() to prevent internal errors.
 		$httpCode = $this->controller->response->httpCodes($code);
-		if ($httpCode[$code]){
+		if ($httpCode[$code]) {
 			$this->controller->response->statusCode($code);
-		}else{
+		} else {
 			$this->controller->response->statusCode(500);
 			$code = 500;
 		}
@@ -117,8 +117,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		    'url' => $url,
 		    'status' => $code,
 		    'message' => $message,
-		    'code' => $code,
-		    'moreInfo' => 'http:///www.bravo-kernel.com/docs/errors/12001',
+		    'code' => $error->getCode(),
+		    'moreInfo' => $this->_getMoreInfo($error->getCode()),
 		    'error' => $error,
 		    '_serialize' => array('status', 'message', 'code', 'moreInfo')
 		));
@@ -155,6 +155,26 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 			$message = $message[$error->getCode()];
 		}
 		return $message;
+	}
+
+	/**
+	 * _getMoreInfo() is used to auto-generate a link to your API documentation website
+	 * using the status-code passed.
+	 *
+	 * CakeExceptions will lead to links using the "valid" HTTP Status Code, e.g.:
+	 * - http://www.yourapidocs.com/403
+	 * - http://www.yourapidocs.com/500
+	 *
+	 * RestKitExceptions will lead to links using the default 500 or the $code parameter passed, e.g.:
+	 * - http://www.apidocs.com/500
+	 * - http://www.apidocs.com/12004
+	 *
+	 * @param type $error
+	 * @return string
+	 */
+	private function _getMoreInfo($code) {
+		$moreInfo = Configure::read('RestKit.Response.moreInfo') . '/' . $code;
+		return $moreInfo;
 	}
 
 }

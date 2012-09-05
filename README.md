@@ -1,8 +1,6 @@
 # CakePHP RestKit plugin
 
-Need a full-featured REST API?
-
-Load this plugin and you are ready to go!
+An attempt to create a full featured REST-only plugin for CakePHP.
 
 ## Version ##
 
@@ -244,8 +242,7 @@ RestKit supports out-of-the box validation for the following URI options
 
 # TODO
 
-* in debug-mode extend rich error information with debugging info
-* in debug-mode ignore moreInfo?
+* refactor Exceptions debug information
 * make default RestKit HTTP Status Code description a configuration option
 * normalize html error responses (now share REST logic)
 * add security (deny all unless authorized)

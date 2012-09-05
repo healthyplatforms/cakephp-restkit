@@ -87,7 +87,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 * Please note that only the serialized variables will appear in the JSON/XML output and
 	 * will appear in the same order as they are serialized here.
 	 *
-	 * Also note that we set $name and $url here as well because they are required by the default HTML error-views.
+	 * Also note that we set $name and $url here even though they are not used for JSON/XML because
+	 * they are required by the default HTML error-views.
 	 *
 	 * @todo add a check to detect REST or HTML so we can fill the REST errors with more meaningfull
 	 * messages in production environments. Simply put: 'not found' will now appear in the REST response
@@ -106,16 +107,30 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		$this->_setHttpResponseHeader($code);
 
 		// set variables for both view- and viewless JSON/XML
-		$this->controller->set(array(
+		$setVars = array(
 		    'name' => $message,
 		    'url' => $url,
 		    'status' => $code,
 		    'message' => $message,
 		    'code' => $error->getCode(),
 		    'moreInfo' => $this->_getMoreInfo($error->getCode()),
-		    'error' => $error
-		));
+		);
 
+		// add debug-info when needed
+		if (Configure::read('debug') > 0) {
+			$setVars['debug'] = array(
+			    'file' => $error->getFile(),
+			    'line' => $error->getLine()
+			);
+		}
+
+		// add required CakeException object
+		$setVars['error'] = $error;
+
+		// set view vars and serialize
+		$this->controller->set($setVars);
+
+		// serialize in order of appearance
 		if (Configure::read('debug') == 0) {
 			$this->controller->set(array('_serialize' => array(
 				'status',
@@ -125,12 +140,12 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 				)));
 		} else {
 			$this->controller->set(array('_serialize' => array(
-			'status',
-			'message',
-			'code',
-			'moreInfo',
-			'trace'
-			)));
+				'status',
+				'message',
+				'code',
+				'moreInfo',
+				'debug'
+				)));
 		}
 	}
 
@@ -168,7 +183,6 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		return $message;
 	}
 
-
 	/**
 	 * _setHttpResponseHeader() is used to set the HTTP Response Header.
 	 *
@@ -178,7 +192,7 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 * @param int $code
 	 * @return void
 	 */
-	private function _setHttpResponseHeader($code = null){
+	private function _setHttpResponseHeader($code = null) {
 		$httpCode = $this->controller->response->httpCodes($code);
 		if ($httpCode[$code]) {
 			$this->controller->response->statusCode($code);

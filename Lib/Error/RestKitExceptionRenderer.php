@@ -97,21 +97,15 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 */
 	private function _setRichErrorInformation($error) {
 
+		// set up variables
 		$url = $this->controller->request->here();
 		$code = $error->getCode();
 		$message = $this->_getRichErrorMessage($error);
 
-		// Reset the the HTTP Response Header "Status Code" to 500 if it
-		// does not exist in the RequestResponse::httpCodes() to prevent internal errors.
-		$httpCode = $this->controller->response->httpCodes($code);
-		if ($httpCode[$code]) {
-			$this->controller->response->statusCode($code);
-		} else {
-			$this->controller->response->statusCode(500);
-			$code = 500;
-		}
+		// set the correct response header
+		$this->_setHttpResponseHeader($code);
 
-		// set variables for both view and viewless JSON/XML
+		// set variables for both view- and viewless JSON/XML
 		$this->controller->set(array(
 		    'name' => $message,
 		    'url' => $url,
@@ -119,9 +113,25 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 		    'message' => $message,
 		    'code' => $error->getCode(),
 		    'moreInfo' => $this->_getMoreInfo($error->getCode()),
-		    'error' => $error,
-		    '_serialize' => array('status', 'message', 'code', 'moreInfo')
+		    'error' => $error
 		));
+
+		if (Configure::read('debug') == 0) {
+			$this->controller->set(array('_serialize' => array(
+				'status',
+				'message',
+				'code',
+				'moreInfo'
+				)));
+		} else {
+			$this->controller->set(array('_serialize' => array(
+			'status',
+			'message',
+			'code',
+			'moreInfo',
+			'trace'
+			)));
+		}
 	}
 
 	/**
@@ -156,6 +166,26 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 			$message = $attributes['message'];
 		}
 		return $message;
+	}
+
+
+	/**
+	 * _setHttpResponseHeader() is used to set the HTTP Response Header.
+	 *
+	 * Will reset $code to 500 if the passed code is not present in the
+	 * RequestResponse::httpCodes() array to prevent an internal error.
+	 *
+	 * @param int $code
+	 * @return void
+	 */
+	private function _setHttpResponseHeader($code = null){
+		$httpCode = $this->controller->response->httpCodes($code);
+		if ($httpCode[$code]) {
+			$this->controller->response->statusCode($code);
+		} else {
+			$this->controller->response->statusCode(500);
+			$code = 500;
+		}
 	}
 
 	/**

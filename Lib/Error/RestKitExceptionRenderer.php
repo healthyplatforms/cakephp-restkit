@@ -129,8 +129,8 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 *
 	 * When debug=0 all error messages (except those of type RestKitException)
 	 * will be reset to the corresponding HTTP Status Code as found in
-	 * CakeResponse::httpCodes() to prevent sensitive information slipping
-	 * into the public.
+	 * CakeResponse::httpCodes() to prevent sensitive information appearing
+	 * to the public.
 	 *
 	 * For CakeExceptions we retrieve the message using $error->getMessage().
 	 * For RestKitExceptions we retrieve the message using:
@@ -142,17 +142,18 @@ class RestKitExceptionRenderer extends ExceptionRenderer {
 	 */
 	private function _getRichErrorMessage($error) {
 
-		// always retrieve the full error message
+		// non-debug mode so set the CakeException message to the HTTP Status Code description
+		if (Configure::read('debug') == 0 && (!$error instanceof RestKitException)) {
+			$message = $this->controller->response->httpCodes($error->getCode());
+			$message = $message[$error->getCode()];
+			return $message;
+		}
+
+		// debug mode so show the full message
 		$message = h($error->getMessage());
 		if ($error instanceof RestKitException && (!$message)) { // option-array passed
 			$attributes = $error->getAttributes();
 			$message = $attributes['message'];
-		}
-
-		// not in debug mode so reset all error messages (excluding RestKitException messages)
-		if (Configure::read('debug') == 0 && (!$error instanceof RestKitException)) {
-			$message = $this->controller->response->httpCodes($error->getCode());
-			$message = $message[$error->getCode()];
 		}
 		return $message;
 	}
